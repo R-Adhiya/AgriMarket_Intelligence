@@ -1,0 +1,64 @@
+import { NavLink, Outlet } from 'react-router-dom'
+import {
+  LayoutDashboard, TrendingUp, BarChart3, Lightbulb, Users, User, Leaf
+} from 'lucide-react'
+import { ROUTES } from '../constants/routes'
+import BackendStatus from '../components/BackendStatus'
+
+const navItems = [
+  { to: ROUTES.DASHBOARD,       icon: LayoutDashboard, label: 'Dashboard'       },
+  { to: ROUTES.MARKETS,         icon: TrendingUp,      label: 'Markets'         },
+  { to: ROUTES.PREDICTION,      icon: BarChart3,       label: 'Price Prediction' },
+  { to: ROUTES.RECOMMENDATIONS, icon: Lightbulb,       label: 'Recommendations' },
+  { to: ROUTES.BUYERS,          icon: Users,           label: 'Buyers'          },
+  { to: ROUTES.PROFILE,         icon: User,            label: 'Profile'         },
+]
+
+export default function AppLayout() {
+  return (
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Sidebar */}
+      <aside className="w-60 shrink-0 bg-white border-r border-gray-200 flex flex-col">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-200">
+          <span className="flex items-center justify-center w-8 h-8 bg-primary-600 rounded-lg">
+            <Leaf className="w-4 h-4 text-white" />
+          </span>
+          <span className="text-sm font-semibold text-gray-900 leading-tight">
+            AgriMarket<br />Intelligence
+          </span>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          {navItems.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`
+              }
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-4 py-3 border-t border-gray-200">
+          <BackendStatus />
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
+    </div>
+  )
+}
