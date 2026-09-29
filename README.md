@@ -193,3 +193,79 @@ pytest
 ## License
 
 MIT License — see [LICENSE](./LICENSE) for details.
+
+
+---
+
+## Phase 2 — Database Foundation
+
+### PostgreSQL Setup
+
+Install PostgreSQL 15+ and create the database:
+
+```bash
+# macOS / Linux
+createdb agrimarket
+
+# Windows (PowerShell, adjust path as needed)
+& "C:\Program Files\PostgreSQL\15\bin\createdb.exe" agrimarket
+```
+
+### Environment Configuration
+
+```bash
+cd backend
+copy .env.example .env
+```
+
+Edit `backend/.env`:
+
+```env
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/agrimarket
+SECRET_KEY=change-me-in-production
+CORS_ORIGINS=http://localhost:5173
+```
+
+### Run Alembic Migrations
+
+```bash
+cd backend
+.venv\Scripts\alembic upgrade head        # Windows
+# source .venv/bin/activate && alembic upgrade head   # macOS/Linux
+```
+
+This creates all 9 tables:
+`users`, `farmers`, `buyers`, `crops`, `markets`, `market_prices`,
+`buyer_requirements`, `recommendations`, `transaction_interests`
+
+### Seed Development Data
+
+```bash
+cd backend
+.venv\Scripts\python.exe -m app.database.seed
+```
+
+Inserts sample crops (Tomato, Onion, Potato, Rice, Banana) and three Tamil Nadu
+markets (Coimbatore, Erode, Tiruppur) with a few sample price records.
+**These are development samples only — not real market prices.**
+
+### Running Database Tests
+
+Tests use SQLite in-memory — no PostgreSQL required:
+
+```bash
+cd backend
+.venv\Scripts\pytest.exe tests\ -v
+```
+
+Expected: **13 passed** (9 Phase 2 database tests + 4 Phase 1 health tests).
+
+### Alembic Commands Reference
+
+```bash
+alembic upgrade head          # Apply all migrations
+alembic downgrade -1          # Rollback one revision
+alembic current               # Show current revision
+alembic history               # List all revisions
+alembic revision -m "name"    # Create a new migration
+```

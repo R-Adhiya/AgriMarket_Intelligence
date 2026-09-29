@@ -1,36 +1,33 @@
 """
-Database configuration for AgriMarket Intelligence.
-
-Phase 1: Architecture placeholder — no tables created yet.
-Phase 2: PostgreSQL + SQLAlchemy integration will be implemented here.
+SQLAlchemy session factory and FastAPI dependency.
 """
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from collections.abc import Generator
 
-from app.core.config import settings
+from sqlalchemy.orm import Session, sessionmaker
 
-# Engine — not used in Phase 1, instantiated here for architecture completeness
-# The connection will only be established when explicitly called
-engine = None  # Will be: create_engine(settings.DATABASE_URL)
+from app.database.connection import engine
 
-# Session factory — Phase 2+
-SessionLocal = None
-
-# Base class for all ORM models — Phase 2+
-Base = declarative_base()
+SessionLocal: sessionmaker[Session] = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False,
+    expire_on_commit=False,
+)
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     """
-    Dependency for FastAPI route handlers.
-    Yields a database session and ensures it is closed after the request.
-    Phase 2+: Uncomment the implementation below.
+    FastAPI dependency — yields a database session per request
+    and ensures it is closed when the request finishes.
+
+    Usage in a route:
+        @router.get("/example")
+        def example(db: Session = Depends(get_db)):
+            ...
     """
-    # db = SessionLocal()
-    # try:
-    #     yield db
-    # finally:
-    #     db.close()
-    pass  # Phase 1 placeholder
+    db: Session = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
