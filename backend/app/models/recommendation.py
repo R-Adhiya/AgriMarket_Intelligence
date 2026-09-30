@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Index, Numeric, Text
+from sqlalchemy import ForeignKey, Index, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base, TimestampMixin
@@ -7,8 +7,7 @@ from app.database.base import Base, TimestampMixin
 class Recommendation(Base, TimestampMixin):
     """
     Stores a generated selling recommendation for a farmer.
-    The recommendation engine (Phase 5+) writes here; this phase only
-    defines the schema.
+    Written by the Phase 8 recommendation engine.
     """
     __tablename__ = "recommendations"
 
@@ -28,10 +27,15 @@ class Recommendation(Base, TimestampMixin):
     transport_cost: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)
     expected_gross_revenue: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
     expected_net_revenue: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
+    distance_km: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
 
-    # 0.0–1.0 confidence score from the ML/recommendation engine
+    # "current" or "predicted"
+    price_basis: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # Deterministic rule-based — confidence always null
     confidence: Mapped[float | None] = mapped_column(Numeric(4, 3), nullable=True)
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
     farmer: Mapped["Farmer"] = relationship("Farmer", back_populates="recommendations")  # noqa: F821
@@ -48,5 +52,5 @@ class Recommendation(Base, TimestampMixin):
     def __repr__(self) -> str:
         return (
             f"<Recommendation id={self.id} farmer_id={self.farmer_id} "
-            f"crop_id={self.crop_id} confidence={self.confidence}>"
+            f"crop_id={self.crop_id} net_rev={self.expected_net_revenue}>"
         )
