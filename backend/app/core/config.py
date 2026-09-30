@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@example.com"
     ADMIN_PASSWORD: str = "change-this-password"
 
+    # Transport cost estimation (Phase 6)
+    # Formula: base_cost + (distance_km * rate_per_km * quantity_quintals)
+    # These are development assumptions — not real commercial quotes.
+    TRANSPORT_BASE_COST: float = 200.0      # INR — minimum truck hire charge
+    TRANSPORT_RATE_PER_KM: float = 2.5      # INR per km per quintal-equivalent
+    TRANSPORT_QUANTITY_UNIT: str = "quintal"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
