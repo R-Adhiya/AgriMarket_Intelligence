@@ -8,14 +8,20 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
 
-    # Database (Phase 2+)
+    # Database
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/agrimarket"
 
-    # Security (Phase 3+)
-    SECRET_KEY: str = "change-me-in-production"
+    # JWT / Auth
+    SECRET_KEY: str = "replace-with-a-secure-development-secret"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     # CORS
     CORS_ORIGINS: List[str] = ["http://localhost:5173"]
+
+    # Admin seed (development only)
+    ADMIN_EMAIL: str = "admin@example.com"
+    ADMIN_PASSWORD: str = "change-this-password"
 
     class Config:
         env_file = ".env"

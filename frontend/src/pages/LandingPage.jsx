@@ -71,10 +71,16 @@ export default function LandingPage() {
             ))}
           </nav>
 
-          {/* Login + mobile toggle */}
+          {/* Login / Register + mobile toggle */}
           <div className="flex items-center gap-3">
             <Link
-              to={ROUTES.DASHBOARD}
+              to="/register"
+              className="hidden sm:inline-flex text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Register
+            </Link>
+            <Link
+              to="/login"
               className="hidden sm:inline-flex btn-secondary text-sm py-2 px-4"
             >
               Login
@@ -103,9 +109,9 @@ export default function LandingPage() {
               </Link>
             ))}
             <Link
-              to={ROUTES.DASHBOARD}
+              to="/login"
               onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-primary-700 hover:bg-primary-50"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-green-700 hover:bg-green-50"
             >
               Login
             </Link>

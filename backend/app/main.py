@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.api.health import router as health_router
+from app.api.auth import router as auth_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -12,7 +13,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS — allow the Vite dev server (configurable via .env)
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -23,6 +24,7 @@ app.add_middleware(
 
 # Routers
 app.include_router(health_router)
+app.include_router(auth_router)
 
 
 @app.get("/", include_in_schema=False)
