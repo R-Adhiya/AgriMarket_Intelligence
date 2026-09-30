@@ -7,6 +7,7 @@ from app.api.auth import router as auth_router
 from app.api.farmer import router as farmer_router
 from app.api.market import router as market_router
 from app.api.transport import router as transport_router
+from app.api.prediction import router as prediction_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -31,6 +32,7 @@ app.include_router(auth_router)
 app.include_router(farmer_router)
 app.include_router(market_router)
 app.include_router(transport_router)
+app.include_router(prediction_router)
 
 
 @app.get("/", include_in_schema=False)

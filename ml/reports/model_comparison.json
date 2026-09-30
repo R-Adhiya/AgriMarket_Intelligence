@@ -1,0 +1,1116 @@
+{
+  "data_source": "synthetic_development",
+  "data_rows": 4923,
+  "crops": [
+    "Tomato",
+    "Onion",
+    "Potato"
+  ],
+  "markets": [
+    "Coimbatore APMC Market",
+    "Erode Wholesale Market",
+    "Tiruppur Agricultural Market"
+  ],
+  "date_range": [
+    "2024-01-01",
+    "2025-06-30"
+  ],
+  "split": {
+    "train": "70%",
+    "val": "15%",
+    "test": "15%"
+  },
+  "results": {
+    "Tomato/1": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 0.353,
+            "rmse": 0.4542,
+            "r2": 0.8204,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.362,
+            "rmse": 0.4344,
+            "r2": 0.8941,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 0.3703,
+            "rmse": 0.4681,
+            "r2": 0.8092,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.3642,
+            "rmse": 0.4498,
+            "r2": 0.8864,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.4739,
+            "mean_rmse": 0.5887,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 0.421,
+            "rmse": 0.531,
+            "r2": 0.7545,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.7489,
+            "rmse": 0.9738,
+            "r2": 0.4677,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.9144,
+            "mean_rmse": 1.1413,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B289F9B0>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Tomato/2": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 0.4144,
+            "rmse": 0.4936,
+            "r2": 0.9646,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.4201,
+            "rmse": 0.5285,
+            "r2": 0.9203,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 0.4815,
+            "rmse": 0.5978,
+            "r2": 0.9481,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.4628,
+            "rmse": 0.5807,
+            "r2": 0.9038,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.4172,
+            "mean_rmse": 0.5195,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 0.5167,
+            "rmse": 0.6846,
+            "r2": 0.9319,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.5909,
+            "rmse": 0.7563,
+            "r2": 0.8368,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.6473,
+            "mean_rmse": 0.8297,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B29EB410>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Tomato/3": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 0.359,
+            "rmse": 0.4565,
+            "r2": 0.5432,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.3959,
+            "rmse": 0.4758,
+            "r2": 0.8295,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 0.4127,
+            "rmse": 0.51,
+            "r2": 0.4298,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.4128,
+            "rmse": 0.5102,
+            "r2": 0.8041,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.4453,
+            "mean_rmse": 0.5469,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 0.4154,
+            "rmse": 0.544,
+            "r2": 0.3512,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 0.4099,
+            "rmse": 0.5339,
+            "r2": 0.7854,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 0.5538,
+            "mean_rmse": 0.7083,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B2AD8BF0>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Onion/1": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 7.4931,
+            "rmse": 9.6603,
+            "r2": 0.9716,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.0993,
+            "rmse": 8.8477,
+            "r2": 0.7985,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 7.6293,
+            "rmse": 9.8923,
+            "r2": 0.9702,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.9594,
+            "rmse": 8.8157,
+            "r2": 0.8,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 13.2952,
+            "mean_rmse": 15.8094,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 9.2274,
+            "rmse": 11.653,
+            "r2": 0.9587,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.7815,
+            "rmse": 9.9583,
+            "r2": 0.7448,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 11.4414,
+            "mean_rmse": 14.1043,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B15794C0>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Onion/2": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 8.6191,
+            "rmse": 10.3949,
+            "r2": 0.9136,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.3685,
+            "rmse": 8.0739,
+            "r2": 0.8542,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 9.7028,
+            "rmse": 12.3539,
+            "r2": 0.878,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 8.492,
+            "rmse": 10.1746,
+            "r2": 0.7684,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 12.616,
+            "mean_rmse": 15.8515,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 16.0787,
+            "rmse": 21.3232,
+            "r2": 0.6366,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 8.0696,
+            "rmse": 10.0369,
+            "r2": 0.7747,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 17.0775,
+            "mean_rmse": 22.4822,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B2999790>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Onion/3": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 8.4233,
+            "rmse": 10.9373,
+            "r2": 0.7914,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.921,
+            "rmse": 9.7129,
+            "r2": 0.8029,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 8.6227,
+            "rmse": 11.3507,
+            "r2": 0.7753,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 8.1126,
+            "rmse": 9.838,
+            "r2": 0.7978,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 9.2898,
+            "mean_rmse": 11.7059,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 10.2019,
+            "rmse": 13.1653,
+            "r2": 0.6978,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 8.4378,
+            "rmse": 10.7388,
+            "r2": 0.759,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 18.0892,
+            "mean_rmse": 23.5338,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B294DA90>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Potato/1": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 6.3009,
+            "rmse": 8.0169,
+            "r2": 0.6489,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.5084,
+            "rmse": 9.2961,
+            "r2": 0.8945,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 6.3454,
+            "rmse": 8.2312,
+            "r2": 0.6299,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.3136,
+            "rmse": 9.1984,
+            "r2": 0.8967,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 6.8173,
+            "mean_rmse": 8.6073,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 6.6102,
+            "rmse": 8.3149,
+            "r2": 0.6223,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 7.6112,
+            "rmse": 9.4113,
+            "r2": 0.8919,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 7.9158,
+            "mean_rmse": 9.9755,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B2AA05C0>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Potato/2": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 7.4732,
+            "rmse": 9.1367,
+            "r2": 0.9515,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.7186,
+            "rmse": 8.2334,
+            "r2": 0.859,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 7.2793,
+            "rmse": 8.9167,
+            "r2": 0.9538,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.7695,
+            "rmse": 8.4155,
+            "r2": 0.8527,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 11.1337,
+            "mean_rmse": 13.942,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 7.6396,
+            "rmse": 9.3423,
+            "r2": 0.9492,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 13.2413,
+            "rmse": 16.8353,
+            "r2": 0.4106,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 27.5816,
+            "mean_rmse": 34.7171,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B2913590>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    },
+    "Potato/3": {
+      "results": [
+        {
+          "name": "NaiveBaseline",
+          "val_metrics": {
+            "mae": 6.4304,
+            "rmse": 7.6857,
+            "r2": 0.8576,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 5.9148,
+            "rmse": 7.6994,
+            "r2": 0.7757,
+            "n": 81
+          },
+          "cv_result": {}
+        },
+        {
+          "name": "LinearRegression",
+          "val_metrics": {
+            "mae": 6.4856,
+            "rmse": 7.8675,
+            "r2": 0.8507,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.2182,
+            "rmse": 7.928,
+            "r2": 0.7622,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 6.441,
+            "mean_rmse": 8.0442,
+            "n_splits": 3
+          }
+        },
+        {
+          "name": "RandomForest",
+          "val_metrics": {
+            "mae": 6.5959,
+            "rmse": 8.0831,
+            "r2": 0.8424,
+            "n": 81
+          },
+          "test_metrics": {
+            "mae": 6.0157,
+            "rmse": 7.8197,
+            "r2": 0.7686,
+            "n": 81
+          },
+          "cv_result": {
+            "mean_mae": 10.873,
+            "mean_rmse": 14.0019,
+            "n_splits": 3
+          }
+        }
+      ],
+      "best_model": "LinearRegression",
+      "train_size": 378,
+      "val_size": 81,
+      "test_size": 81,
+      "feature_cols": [
+        "day_of_week",
+        "day_of_month",
+        "month",
+        "day_of_year",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "rolling_mean_3",
+        "rolling_mean_7",
+        "rolling_std_3",
+        "rolling_std_7"
+      ],
+      "trained_models": {
+        "NaiveBaseline": "<ml.training.train.NaiveBaseline object at 0x00000156B28C59A0>",
+        "LinearRegression": "LinearRegression()",
+        "RandomForest": "RandomForestRegressor(n_jobs=-1, random_state=42)"
+      }
+    }
+  },
+  "summary": [
+    {
+      "crop": "Tomato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "NaiveBaseline",
+      "val_mae": 0.353,
+      "val_rmse": 0.4542,
+      "val_r2": 0.8204,
+      "test_mae": 0.362,
+      "test_rmse": 0.4344,
+      "test_r2": 0.8941,
+      "is_best": false
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "LinearRegression",
+      "val_mae": 0.3703,
+      "val_rmse": 0.4681,
+      "val_r2": 0.8092,
+      "test_mae": 0.3642,
+      "test_rmse": 0.4498,
+      "test_r2": 0.8864,
+      "is_best": true
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "RandomForest",
+      "val_mae": 0.421,
+      "val_rmse": 0.531,
+      "val_r2": 0.7545,
+      "test_mae": 0.7489,
+      "test_rmse": 0.9738,
+      "test_r2": 0.4677,
+      "is_best": false
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "NaiveBaseline",
+      "val_mae": 0.4144,
+      "val_rmse": 0.4936,
+      "val_r2": 0.9646,
+      "test_mae": 0.4201,
+      "test_rmse": 0.5285,
+      "test_r2": 0.9203,
+      "is_best": false
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "LinearRegression",
+      "val_mae": 0.4815,
+      "val_rmse": 0.5978,
+      "val_r2": 0.9481,
+      "test_mae": 0.4628,
+      "test_rmse": 0.5807,
+      "test_r2": 0.9038,
+      "is_best": true
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "RandomForest",
+      "val_mae": 0.5167,
+      "val_rmse": 0.6846,
+      "val_r2": 0.9319,
+      "test_mae": 0.5909,
+      "test_rmse": 0.7563,
+      "test_r2": 0.8368,
+      "is_best": false
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "NaiveBaseline",
+      "val_mae": 0.359,
+      "val_rmse": 0.4565,
+      "val_r2": 0.5432,
+      "test_mae": 0.3959,
+      "test_rmse": 0.4758,
+      "test_r2": 0.8295,
+      "is_best": false
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "LinearRegression",
+      "val_mae": 0.4127,
+      "val_rmse": 0.51,
+      "val_r2": 0.4298,
+      "test_mae": 0.4128,
+      "test_rmse": 0.5102,
+      "test_r2": 0.8041,
+      "is_best": true
+    },
+    {
+      "crop": "Tomato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "RandomForest",
+      "val_mae": 0.4154,
+      "val_rmse": 0.544,
+      "val_r2": 0.3512,
+      "test_mae": 0.4099,
+      "test_rmse": 0.5339,
+      "test_r2": 0.7854,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "NaiveBaseline",
+      "val_mae": 7.4931,
+      "val_rmse": 9.6603,
+      "val_r2": 0.9716,
+      "test_mae": 7.0993,
+      "test_rmse": 8.8477,
+      "test_r2": 0.7985,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "LinearRegression",
+      "val_mae": 7.6293,
+      "val_rmse": 9.8923,
+      "val_r2": 0.9702,
+      "test_mae": 6.9594,
+      "test_rmse": 8.8157,
+      "test_r2": 0.8,
+      "is_best": true
+    },
+    {
+      "crop": "Onion",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "RandomForest",
+      "val_mae": 9.2274,
+      "val_rmse": 11.653,
+      "val_r2": 0.9587,
+      "test_mae": 7.7815,
+      "test_rmse": 9.9583,
+      "test_r2": 0.7448,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "NaiveBaseline",
+      "val_mae": 8.6191,
+      "val_rmse": 10.3949,
+      "val_r2": 0.9136,
+      "test_mae": 6.3685,
+      "test_rmse": 8.0739,
+      "test_r2": 0.8542,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "LinearRegression",
+      "val_mae": 9.7028,
+      "val_rmse": 12.3539,
+      "val_r2": 0.878,
+      "test_mae": 8.492,
+      "test_rmse": 10.1746,
+      "test_r2": 0.7684,
+      "is_best": true
+    },
+    {
+      "crop": "Onion",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "RandomForest",
+      "val_mae": 16.0787,
+      "val_rmse": 21.3232,
+      "val_r2": 0.6366,
+      "test_mae": 8.0696,
+      "test_rmse": 10.0369,
+      "test_r2": 0.7747,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "NaiveBaseline",
+      "val_mae": 8.4233,
+      "val_rmse": 10.9373,
+      "val_r2": 0.7914,
+      "test_mae": 7.921,
+      "test_rmse": 9.7129,
+      "test_r2": 0.8029,
+      "is_best": false
+    },
+    {
+      "crop": "Onion",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "LinearRegression",
+      "val_mae": 8.6227,
+      "val_rmse": 11.3507,
+      "val_r2": 0.7753,
+      "test_mae": 8.1126,
+      "test_rmse": 9.838,
+      "test_r2": 0.7978,
+      "is_best": true
+    },
+    {
+      "crop": "Onion",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "RandomForest",
+      "val_mae": 10.2019,
+      "val_rmse": 13.1653,
+      "val_r2": 0.6978,
+      "test_mae": 8.4378,
+      "test_rmse": 10.7388,
+      "test_r2": 0.759,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "NaiveBaseline",
+      "val_mae": 6.3009,
+      "val_rmse": 8.0169,
+      "val_r2": 0.6489,
+      "test_mae": 7.5084,
+      "test_rmse": 9.2961,
+      "test_r2": 0.8945,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "LinearRegression",
+      "val_mae": 6.3454,
+      "val_rmse": 8.2312,
+      "val_r2": 0.6299,
+      "test_mae": 7.3136,
+      "test_rmse": 9.1984,
+      "test_r2": 0.8967,
+      "is_best": true
+    },
+    {
+      "crop": "Potato",
+      "market_id": "1",
+      "market_name": "Coimbatore APMC Market",
+      "model": "RandomForest",
+      "val_mae": 6.6102,
+      "val_rmse": 8.3149,
+      "val_r2": 0.6223,
+      "test_mae": 7.6112,
+      "test_rmse": 9.4113,
+      "test_r2": 0.8919,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "NaiveBaseline",
+      "val_mae": 7.4732,
+      "val_rmse": 9.1367,
+      "val_r2": 0.9515,
+      "test_mae": 6.7186,
+      "test_rmse": 8.2334,
+      "test_r2": 0.859,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "LinearRegression",
+      "val_mae": 7.2793,
+      "val_rmse": 8.9167,
+      "val_r2": 0.9538,
+      "test_mae": 6.7695,
+      "test_rmse": 8.4155,
+      "test_r2": 0.8527,
+      "is_best": true
+    },
+    {
+      "crop": "Potato",
+      "market_id": "2",
+      "market_name": "Erode Wholesale Market",
+      "model": "RandomForest",
+      "val_mae": 7.6396,
+      "val_rmse": 9.3423,
+      "val_r2": 0.9492,
+      "test_mae": 13.2413,
+      "test_rmse": 16.8353,
+      "test_r2": 0.4106,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "NaiveBaseline",
+      "val_mae": 6.4304,
+      "val_rmse": 7.6857,
+      "val_r2": 0.8576,
+      "test_mae": 5.9148,
+      "test_rmse": 7.6994,
+      "test_r2": 0.7757,
+      "is_best": false
+    },
+    {
+      "crop": "Potato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "LinearRegression",
+      "val_mae": 6.4856,
+      "val_rmse": 7.8675,
+      "val_r2": 0.8507,
+      "test_mae": 6.2182,
+      "test_rmse": 7.928,
+      "test_r2": 0.7622,
+      "is_best": true
+    },
+    {
+      "crop": "Potato",
+      "market_id": "3",
+      "market_name": "Tiruppur Agricultural Market",
+      "model": "RandomForest",
+      "val_mae": 6.5959,
+      "val_rmse": 8.0831,
+      "val_r2": 0.8424,
+      "test_mae": 6.0157,
+      "test_rmse": 7.8197,
+      "test_r2": 0.7686,
+      "is_best": false
+    }
+  ]
+}
