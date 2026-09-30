@@ -1,63 +1,176 @@
-import { TrendingUp, MapPin, IndianRupee, BarChart3, Info } from 'lucide-react'
-
-const cards = [
-  { label: 'Current Market Price', value: '₹0',  icon: TrendingUp,    hint: 'per quintal' },
-  { label: 'Predicted Price',      value: '--',   icon: BarChart3,     hint: 'ML model — Phase 4' },
-  { label: 'Best Market',          value: '--',   icon: MapPin,        hint: 'Market analysis — Phase 2' },
-  { label: 'Expected Net Return',  value: '₹0',  icon: IndianRupee,   hint: 'After transport costs' },
-]
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { User, Leaf, MapPin, Package, Plus, AlertCircle, ArrowRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { getFarmerProfile, getFarmerCrops } from "../services/farmerService";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const isFarmer = user?.role === "FARMER";
+
+  const [profile, setProfile] = useState(null);
+  const [crops, setCrops]     = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
+
+  useEffect(() => {
+    if (!isFarmer) return;
+    setLoading(true);
+    Promise.all([getFarmerProfile(), getFarmerCrops()])
+      .then(([p, c]) => { setProfile(p); setCrops(c); })
+      .catch(() => setError("Could not load farmer data."))
+      .finally(() => setLoading(false));
+  }, [isFarmer]);
+
   return (
-    <div className="p-6 sm:p-8 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Your agricultural market overview.</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome, {user?.full_name?.split(" ")[0]} 👋
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          {isFarmer ? "Farmer Dashboard" : `${user?.role?.charAt(0)}${user?.role?.slice(1).toLowerCase()} Dashboard`}
+          &nbsp;— Phase data available after full setup
+        </p>
       </div>
 
-      {/* Phase notice */}
-      <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 text-sm text-blue-800">
-        <Info className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>
-          <strong>Phase 1 — Architecture setup.</strong> Real market data, predictions, and
-          recommendations will be available in later phases. Values below are placeholders only.
-        </span>
-      </div>
+      {error && (
+        <div className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4 text-sm">
+          <AlertCircle size={15} /> {error}
+        </div>
+      )}
 
-      {/* KPI cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map(({ label, value, icon: Icon, hint }) => (
-          <div key={label} className="card p-5">
+      {loading && (
+        <div className="text-sm text-gray-400 mb-4">Loading…</div>
+      )}
+
+      {/* Farmer content */}
+      {isFarmer && !loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Profile card */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</span>
-              <span className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg">
-                <Icon className="w-4 h-4 text-gray-500" />
-              </span>
+              <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm">
+                <User size={16} /> Profile
+              </div>
+              <Link to="/profile" className="text-xs text-green-700 hover:underline flex items-center gap-1">
+                Edit <ArrowRight size={12} />
+              </Link>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
-            <p className="text-xs text-gray-400 mt-1">{hint}</p>
+            {profile ? (
+              <dl className="space-y-1 text-sm">
+                <Row label="Name"  value={profile.full_name} />
+                <Row label="Email" value={profile.email} />
+                {profile.phone && <Row label="Phone" value={profile.phone} />}
+              </dl>
+            ) : (
+              <p className="text-sm text-gray-400">No profile data yet.</p>
+            )}
           </div>
-        ))}
-      </div>
 
-      {/* Placeholder sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <div className="card p-5">
-          <h2 className="font-semibold text-gray-800 mb-1">Price Trend</h2>
-          <p className="text-sm text-gray-400">Chart will appear in Phase 2+</p>
-          <div className="mt-4 h-32 bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
-            Market price chart — coming soon
+          {/* Location card */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm">
+                <MapPin size={16} /> Location
+              </div>
+              <Link to="/profile" className="text-xs text-green-700 hover:underline flex items-center gap-1">
+                Edit <ArrowRight size={12} />
+              </Link>
+            </div>
+            {profile?.village || profile?.district || profile?.state ? (
+              <dl className="space-y-1 text-sm">
+                {profile.village  && <Row label="Village"  value={profile.village} />}
+                {profile.district && <Row label="District" value={profile.district} />}
+                {profile.state    && <Row label="State"    value={profile.state} />}
+                {profile.farm_size != null && (
+                  <Row label="Farm size" value={`${profile.farm_size} acres`} />
+                )}
+              </dl>
+            ) : (
+              <p className="text-sm text-gray-400">
+                Location not set.{" "}
+                <Link to="/profile" className="text-green-700 hover:underline">Add it</Link>
+              </p>
+            )}
           </div>
-        </div>
-        <div className="card p-5">
-          <h2 className="font-semibold text-gray-800 mb-1">Nearby Markets</h2>
-          <p className="text-sm text-gray-400">Market list will appear in Phase 2+</p>
-          <div className="mt-4 h-32 bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
-            Market comparison — coming soon
+
+          {/* Crops summary */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 md:col-span-2">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm">
+                <Leaf size={16} /> My Crops
+              </div>
+              <Link to="/markets" className="text-xs text-green-700 hover:underline flex items-center gap-1">
+                Manage <ArrowRight size={12} />
+              </Link>
+            </div>
+
+            {crops.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-400 text-sm gap-2">
+                <Package size={28} className="text-gray-300" />
+                <span>No crops added yet.</span>
+                <Link to="/markets" className="text-green-700 hover:underline flex items-center gap-1 text-xs">
+                  <Plus size={12} /> Add your first crop
+                </Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-gray-400 border-b border-gray-100">
+                      <th className="pb-2 font-medium">Crop</th>
+                      <th className="pb-2 font-medium">Quantity</th>
+                      <th className="pb-2 font-medium">Unit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {crops.map((c) => (
+                      <tr key={c.id} className="border-b border-gray-50 last:border-0">
+                        <td className="py-2 font-medium text-gray-800">{c.crop.name}</td>
+                        <td className="py-2 text-gray-600">{c.quantity}</td>
+                        <td className="py-2 text-gray-500">{c.unit}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
+
+          {/* Placeholder metric cards */}
+          {[
+            { label: "Current Market Price", value: "—", note: "Available in Phase 5" },
+            { label: "Predicted Price",       value: "—", note: "Available in Phase 6" },
+            { label: "Best Market",           value: "—", note: "Available in Phase 5" },
+            { label: "Expected Net Return",   value: "—", note: "Available in Phase 6" },
+          ].map((m) => (
+            <div key={m.label} className="bg-white rounded-xl border border-gray-200 p-5">
+              <p className="text-xs text-gray-400 mb-1">{m.label}</p>
+              <p className="text-2xl font-bold text-gray-300">{m.value}</p>
+              <p className="text-xs text-gray-300 mt-1">{m.note}</p>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
+
+      {/* Non-farmer placeholder */}
+      {!isFarmer && (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+          <p className="text-sm">Dashboard functionality for your role is coming in a later phase.</p>
+        </div>
+      )}
     </div>
-  )
+  );
+}
+
+function Row({ label, value }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <dt className="text-gray-400 shrink-0">{label}</dt>
+      <dd className="text-gray-800 font-medium text-right truncate">{value}</dd>
+    </div>
+  );
 }

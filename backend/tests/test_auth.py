@@ -1,56 +1,15 @@
 """
 Phase 3 authentication tests.
-Uses a single shared SQLite in-memory connection — no PostgreSQL required.
-The same connection is reused for both create_all and all test sessions,
-so tables are visible to every session (in-memory DBs are per-connection).
+Uses the shared SQLite engine from conftest.py — no PostgreSQL required.
 """
 
-# ── Import ALL models first so Base.metadata is fully populated ───────────────
-import app.models  # noqa: F401 — must precede Base usage
+# Models must be first
+import app.models  # noqa: F401
 
-import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, event, StaticPool
-from sqlalchemy.orm import sessionmaker, Session
-
-from app.database.base import Base
-from app.database.session import get_db
+from tests.conftest import get_test_session
 from app.main import app as fastapi_app
 
-# ── Single-connection SQLite pool (all sessions share one connection) ─────────
-# StaticPool makes every checkout reuse the same underlying connection,
-# so tables created by create_all are visible to every ORM session.
-_engine = create_engine(
-    "sqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-    echo=False,
-)
-
-
-@event.listens_for(_engine, "connect")
-def _fk_pragma(dbapi_conn, _):
-    cur = dbapi_conn.cursor()
-    cur.execute("PRAGMA foreign_keys=ON")
-    cur.close()
-
-
-# Create all tables now — using StaticPool this is visible to every session
-Base.metadata.create_all(_engine)
-
-_SessionLocal = sessionmaker(bind=_engine, autocommit=False, autoflush=False)
-
-
-def _override_get_db():
-    db = _SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# Install the override before the TestClient is constructed
-fastapi_app.dependency_overrides[get_db] = _override_get_db
 client = TestClient(fastapi_app)
 
 
@@ -175,9 +134,10 @@ def test_login_unknown_email():
 
 def test_login_inactive_account():
     _register("inactive@test.com")
-    db = _SessionLocal()
     from app.models.user import User
+    db = get_test_session()
     user = db.query(User).filter_by(email="inactive@test.com").first()
+    assert user is not None, "User was not created"
     user.is_active = False
     db.commit()
     db.close()
@@ -264,16 +224,19 @@ def test_farmer_cannot_access_admin_endpoint():
 def test_admin_can_access_admin_endpoint():
     from app.core.security import hash_password
     from app.models.user import User, UserRole
-    db = _SessionLocal()
-    admin = User(
-        full_name="Admin",
-        email="admin_role@test.com",
-        password_hash=hash_password("AdminPass1"),
-        role=UserRole.ADMIN,
-        is_active=True,
-    )
-    db.add(admin)
-    db.commit()
+    db = get_test_session()
+    # Only create if not already present
+    existing = db.query(User).filter_by(email="admin_role@test.com").first()
+    if not existing:
+        admin = User(
+            full_name="Admin",
+            email="admin_role@test.com",
+            password_hash=hash_password("AdminPass1"),
+            role=UserRole.ADMIN,
+            is_active=True,
+        )
+        db.add(admin)
+        db.commit()
     db.close()
     token = _login("admin_role@test.com", "AdminPass1").json()["access_token"]
     r = client.get("/api/auth/test/admin", headers={"Authorization": f"Bearer {token}"})

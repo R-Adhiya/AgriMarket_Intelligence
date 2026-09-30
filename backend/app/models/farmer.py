@@ -26,6 +26,9 @@ class Farmer(Base, TimestampMixin):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="farmer_profile")  # noqa: F821
+    farmer_crops: Mapped[list["FarmerCrop"]] = relationship(  # noqa: F821
+        "FarmerCrop", back_populates="farmer", cascade="all, delete-orphan"
+    )
     recommendations: Mapped[list["Recommendation"]] = relationship(  # noqa: F821
         "Recommendation", back_populates="farmer", cascade="all, delete-orphan"
     )

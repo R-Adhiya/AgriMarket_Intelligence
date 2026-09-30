@@ -38,6 +38,9 @@ class Crop(Base):
     market_prices: Mapped[list["MarketPrice"]] = relationship(  # noqa: F821
         "MarketPrice", back_populates="crop"
     )
+    farmer_crops: Mapped[list["FarmerCrop"]] = relationship(  # noqa: F821
+        "FarmerCrop", back_populates="crop"
+    )
     buyer_requirements: Mapped[list["BuyerRequirement"]] = relationship(  # noqa: F821
         "BuyerRequirement", back_populates="crop"
     )
