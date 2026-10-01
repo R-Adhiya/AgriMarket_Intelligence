@@ -170,10 +170,16 @@ def run_recommendation(
             source_label   = price_row.source or "database"
 
         elif price_basis == "predicted":
-            import pandas as pd
-            from app.services.prediction import (
-                predict_price, InsufficientDataError, ModelNotFoundError
-            )
+            try:
+                import pandas as pd
+                from app.services.prediction import (
+                    predict_price, InsufficientDataError, ModelNotFoundError
+                )
+            except (ImportError, OSError) as _dll_err:
+                raise ValueError(
+                    f"Prediction service unavailable: {_dll_err}. "
+                    "ML libraries could not be loaded."
+                ) from _dll_err
             history_rows = (
                 db.query(MarketPrice)
                 .filter_by(market_id=mkt.id, crop_id=crop.id)

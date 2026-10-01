@@ -5,6 +5,8 @@ from app.core.config import settings
 from app.api.health import router as health_router
 from app.api.auth import router as auth_router
 from app.api.farmer import router as farmer_router
+from app.api.buyer import router as buyer_router
+from app.api.interests import router as interests_router
 from app.api.market import router as market_router
 from app.api.transport import router as transport_router
 from app.api.prediction import router as prediction_router
@@ -31,6 +33,8 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(farmer_router)
+app.include_router(buyer_router)
+app.include_router(interests_router)
 app.include_router(market_router)
 app.include_router(transport_router)
 app.include_router(prediction_router)

@@ -44,6 +44,9 @@ class BuyerRequirement(Base, TimestampMixin):
     # Relationships
     buyer: Mapped["Buyer"] = relationship("Buyer", back_populates="requirements")  # noqa: F821
     crop: Mapped["Crop"] = relationship("Crop", back_populates="buyer_requirements")  # noqa: F821
+    interests: Mapped[list["TransactionInterest"]] = relationship(  # noqa: F821
+        "TransactionInterest", back_populates="requirement"
+    )
 
     __table_args__ = (
         CheckConstraint("quantity >= 0", name="ck_buyer_requirements_qty_non_negative"),

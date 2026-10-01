@@ -15,8 +15,6 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-import pandas as pd
-
 from app.api.deps import get_current_user
 from app.database.session import get_db
 from app.models.crop import Crop
@@ -24,12 +22,10 @@ from app.models.market import Market
 from app.models.market_price import MarketPrice
 from app.models.user import User
 from app.schemas.prediction import PricePredictionResponse, PredictionPoint
-from app.services.prediction import (
-    predict_price,
-    InsufficientDataError,
-    ModelNotFoundError,
-    SUPPORTED_HORIZONS,
-)
+
+# NOTE: prediction service (pandas/sklearn/numpy) is imported lazily inside
+# the route handler to avoid DLL load failures at module import time.
+SUPPORTED_HORIZONS = {1, 3, 7}
 
 router = APIRouter(
     prefix="/api/prediction",
@@ -86,6 +82,9 @@ def predict(
                 "At least 8 records needed for prediction."
             ),
         )
+
+    import pandas as pd  # lazy import — keeps pandas DLL out of module load
+    from app.services.prediction import predict_price, InsufficientDataError, ModelNotFoundError
 
     history_df = pd.DataFrame([
         {"price_date": str(r.price_date), "modal_price": float(r.modal_price)}

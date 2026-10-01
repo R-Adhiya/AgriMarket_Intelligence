@@ -58,6 +58,7 @@ class FarmerCropCreate(BaseModel):
     quantity: float = Field(..., gt=0, description="Must be greater than 0")
     unit: QuantityUnit = QuantityUnit.QUINTAL
     notes: Optional[str] = Field(None, max_length=1000)
+    is_available: bool = True
 
     @field_validator("quantity")
     @classmethod
@@ -71,6 +72,7 @@ class FarmerCropUpdate(BaseModel):
     quantity: Optional[float] = Field(None, gt=0)
     unit: Optional[QuantityUnit] = None
     notes: Optional[str] = Field(None, max_length=1000)
+    is_available: Optional[bool] = None
 
     @field_validator("quantity")
     @classmethod
@@ -87,6 +89,7 @@ class FarmerCropResponse(BaseModel):
     quantity: float
     unit: QuantityUnit
     notes: Optional[str]
+    is_available: bool
     created_at: datetime
     updated_at: datetime
 

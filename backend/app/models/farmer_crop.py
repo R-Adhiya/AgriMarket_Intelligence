@@ -35,6 +35,8 @@ class FarmerCrop(Base, TimestampMixin):
         Enum(QuantityUnit, name="quantityunit"), nullable=False, default=QuantityUnit.QUINTAL
     )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Whether this crop lot is currently available for buyer matching
+    is_available: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     # Relationships
     farmer: Mapped["Farmer"] = relationship("Farmer", back_populates="farmer_crops")  # noqa: F821

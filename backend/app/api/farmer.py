@@ -1,5 +1,5 @@
 """
-Farmer module API — Phase 4.
+Farmer module API — Phase 4 + Phase 9 additions.
 
 All endpoints require a valid JWT with role=FARMER.
 
@@ -10,16 +10,21 @@ Routes:
   POST   /api/farmer/crops
   PUT    /api/farmer/crops/{crop_entry_id}
   DELETE /api/farmer/crops/{crop_entry_id}
+
+Phase 9 additions:
+  GET    /api/farmer/buyer-requirements   -- discover active buyer requirements
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import get_current_user, require_role
 from app.database.session import get_db
 from app.models.crop import Crop
 from app.models.farmer import Farmer
 from app.models.farmer_crop import FarmerCrop
+from app.models.buyer_requirement import BuyerRequirement, RequirementStatus
+from app.models.buyer import Buyer
 from app.models.user import User, UserRole
 from app.schemas.farmer import (
     FarmerCropCreate,
@@ -28,6 +33,7 @@ from app.schemas.farmer import (
     FarmerProfileResponse,
     FarmerProfileUpdate,
 )
+from app.schemas.buyer import BuyerRequirementPublicResponse
 
 router = APIRouter(
     prefix="/api/farmer",
@@ -197,3 +203,70 @@ def delete_crop(
 
     db.delete(entry)
     db.commit()
+
+
+
+# ── Phase 9: Farmer discovers active buyer requirements ───────────────────────
+
+@router.get(
+    "/buyer-requirements",
+    response_model=list[BuyerRequirementPublicResponse],
+    summary="List active buyer requirements matching the farmer's crops",
+)
+def list_buyer_requirements(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Return ACTIVE buyer requirements for crops this farmer has listed.
+    Shows public buyer info only (no private contact data).
+    """
+    farmer = db.query(Farmer).filter_by(user_id=current_user.id).first()
+    if not farmer:
+        return []
+
+    # Get crop IDs this farmer has (available)
+    farmer_crop_ids = (
+        db.query(FarmerCrop.crop_id)
+        .filter_by(farmer_id=farmer.id, is_available=True)
+        .distinct()
+        .all()
+    )
+    crop_ids = [r[0] for r in farmer_crop_ids]
+    if not crop_ids:
+        return []
+
+    reqs = (
+        db.query(BuyerRequirement)
+        .options(
+            joinedload(BuyerRequirement.crop),
+            joinedload(BuyerRequirement.buyer).joinedload(Buyer.user),
+        )
+        .filter(
+            BuyerRequirement.crop_id.in_(crop_ids),
+            BuyerRequirement.status == RequirementStatus.ACTIVE,
+        )
+        .order_by(BuyerRequirement.created_at.desc())
+        .all()
+    )
+
+    results = []
+    for r in reqs:
+        buyer_user = r.buyer.user if r.buyer else None
+        results.append(
+            BuyerRequirementPublicResponse(
+                id=r.id,
+                crop_id=r.crop_id,
+                crop_name=r.crop.name if r.crop else "",
+                quantity=float(r.quantity) if r.quantity is not None else None,
+                minimum_price=float(r.minimum_price) if r.minimum_price is not None else None,
+                maximum_price=float(r.maximum_price) if r.maximum_price is not None else None,
+                location=r.location,
+                district=r.district,
+                state=r.state,
+                buyer_name=r.buyer.business_name or (buyer_user.full_name if buyer_user else None),
+                status=r.status,
+                created_at=r.created_at,
+            )
+        )
+    return results
