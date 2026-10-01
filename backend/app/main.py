@@ -11,6 +11,7 @@ from app.api.market import router as market_router
 from app.api.transport import router as transport_router
 from app.api.prediction import router as prediction_router
 from app.api.recommendation import router as recommendation_router
+from app.api.dashboard import router as dashboard_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -39,6 +40,25 @@ app.include_router(market_router)
 app.include_router(transport_router)
 app.include_router(prediction_router)
 app.include_router(recommendation_router)
+app.include_router(dashboard_router)
+
+
+@app.on_event("startup")
+def on_startup():
+    """Auto-create tables and seed dev data when using SQLite (local dev)."""
+    if settings.DATABASE_URL.startswith("sqlite"):
+        from app.database.connection import engine
+        from app.database.base import Base
+        # Import all models so their tables are registered with Base.metadata
+        import app.models  # noqa: F401
+        Base.metadata.create_all(bind=engine)
+
+        # Seed development data (idempotent)
+        try:
+            from app.database.seed import seed
+            seed()
+        except Exception as e:
+            print(f"[startup] seed skipped: {e}")
 
 
 @app.get("/", include_in_schema=False)

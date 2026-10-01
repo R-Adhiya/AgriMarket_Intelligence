@@ -1,19 +1,44 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, TrendingUp, BarChart3, Lightbulb, Users, User, Leaf, LogOut,
+  ShoppingBag, MessageSquare,
 } from "lucide-react";
 import { ROUTES } from "../constants/routes";
 import BackendStatus from "../components/BackendStatus";
 import { useAuth } from "../context/AuthContext";
 
-const navItems = [
-  { to: ROUTES.DASHBOARD,       icon: LayoutDashboard, label: "Dashboard"        },
-  { to: ROUTES.MARKETS,         icon: TrendingUp,      label: "Markets"          },
-  { to: ROUTES.PREDICTION,      icon: BarChart3,       label: "Price Prediction" },
-  { to: ROUTES.RECOMMENDATIONS, icon: Lightbulb,       label: "Recommendations"  },
-  { to: ROUTES.BUYERS,          icon: Users,           label: "Buyers"           },
-  { to: ROUTES.PROFILE,         icon: User,            label: "Profile"          },
-];
+// Navigation items vary by role.
+// Farmer sees: Dashboard, Markets, Prediction, Recommendations, Buyers, Profile
+// Buyer sees: Dashboard, Buyers, Profile
+// Others (admin, unknown): Dashboard, Profile
+
+function getNavItems(role) {
+  const dashboard = { to: ROUTES.DASHBOARD, icon: LayoutDashboard, label: "Dashboard" };
+  const profile   = { to: ROUTES.PROFILE,   icon: User,             label: "Profile" };
+  const buyers    = { to: ROUTES.BUYERS,     icon: Users,            label: "Buyers" };
+
+  if (role === "FARMER") {
+    return [
+      dashboard,
+      { to: ROUTES.MARKETS,         icon: TrendingUp,  label: "Markets"         },
+      { to: ROUTES.PREDICTION,      icon: BarChart3,   label: "Price Prediction" },
+      { to: ROUTES.RECOMMENDATIONS, icon: Lightbulb,   label: "Recommendations" },
+      { to: ROUTES.BUYERS,          icon: ShoppingBag, label: "Buyer Opportunities" },
+      profile,
+    ];
+  }
+
+  if (role === "BUYER") {
+    return [
+      dashboard,
+      { to: ROUTES.BUYERS,          icon: ShoppingBag, label: "My Requirements" },
+      profile,
+    ];
+  }
+
+  // Fallback / ADMIN
+  return [dashboard, profile];
+}
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
@@ -27,6 +52,8 @@ export default function AppLayout() {
   const roleLabel = user?.role
     ? user.role.charAt(0) + user.role.slice(1).toLowerCase()
     : "";
+
+  const navItems = getNavItems(user?.role);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
