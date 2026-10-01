@@ -1,9 +1,10 @@
 export const ROUTES = {
-  HOME: '/',
-  DASHBOARD: '/dashboard',
-  MARKETS: '/markets',
-  PREDICTION: '/prediction',
+  HOME:            '/',
+  DASHBOARD:       '/dashboard',
+  MARKETS:         '/markets',
+  PREDICTION:      '/prediction',
   RECOMMENDATIONS: '/recommendations',
-  BUYERS: '/buyers',
-  PROFILE: '/profile',
+  BUYERS:          '/buyers',
+  PROFILE:         '/profile',
+  ADMIN:           '/admin',
 }

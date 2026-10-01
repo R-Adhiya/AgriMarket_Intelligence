@@ -1,28 +1,30 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, TrendingUp, BarChart3, Lightbulb, Users, User, Leaf, LogOut,
-  ShoppingBag, MessageSquare,
+  LayoutDashboard, TrendingUp, BarChart3, Lightbulb, User, Leaf, LogOut,
+  ShoppingBag, Shield,
 } from "lucide-react";
 import { ROUTES } from "../constants/routes";
 import BackendStatus from "../components/BackendStatus";
 import { useAuth } from "../context/AuthContext";
 
-// Navigation items vary by role.
-// Farmer sees: Dashboard, Markets, Prediction, Recommendations, Buyers, Profile
-// Buyer sees: Dashboard, Buyers, Profile
-// Others (admin, unknown): Dashboard, Profile
-
 function getNavItems(role) {
   const dashboard = { to: ROUTES.DASHBOARD, icon: LayoutDashboard, label: "Dashboard" };
-  const profile   = { to: ROUTES.PROFILE,   icon: User,             label: "Profile" };
-  const buyers    = { to: ROUTES.BUYERS,     icon: Users,            label: "Buyers" };
+  const profile   = { to: ROUTES.PROFILE,   icon: User,            label: "Profile" };
+
+  if (role === "ADMIN") {
+    return [
+      dashboard,
+      { to: ROUTES.ADMIN, icon: Shield, label: "Admin Panel" },
+      profile,
+    ];
+  }
 
   if (role === "FARMER") {
     return [
       dashboard,
-      { to: ROUTES.MARKETS,         icon: TrendingUp,  label: "Markets"         },
-      { to: ROUTES.PREDICTION,      icon: BarChart3,   label: "Price Prediction" },
-      { to: ROUTES.RECOMMENDATIONS, icon: Lightbulb,   label: "Recommendations" },
+      { to: ROUTES.MARKETS,         icon: TrendingUp,  label: "Markets"             },
+      { to: ROUTES.PREDICTION,      icon: BarChart3,   label: "Price Prediction"    },
+      { to: ROUTES.RECOMMENDATIONS, icon: Lightbulb,   label: "Recommendations"     },
       { to: ROUTES.BUYERS,          icon: ShoppingBag, label: "Buyer Opportunities" },
       profile,
     ];
@@ -31,12 +33,11 @@ function getNavItems(role) {
   if (role === "BUYER") {
     return [
       dashboard,
-      { to: ROUTES.BUYERS,          icon: ShoppingBag, label: "My Requirements" },
+      { to: ROUTES.BUYERS, icon: ShoppingBag, label: "My Requirements" },
       profile,
     ];
   }
 
-  // Fallback / ADMIN
   return [dashboard, profile];
 }
 

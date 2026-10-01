@@ -182,9 +182,9 @@ def get_farmer_dashboard(
         FarmerCrop.is_active == True,
     ).options(joinedload(FarmerCrop.crop)).all()
 
-    available_crops = [c for c in crops if c.is_available and (c.available_quantity or 0) > 0]
+    available_crops = [c for c in crops if c.is_available and (c.quantity or 0) > 0]
     total_available_qty = sum(
-        float(c.available_quantity or 0) for c in available_crops
+        float(c.quantity or 0) for c in available_crops
     )
 
     # ---- Buyer opportunities matching farmer's crops ----
@@ -409,7 +409,7 @@ def get_buyer_dashboard(
             .filter(
                 FarmerCrop.crop_id == req.crop_id,
                 FarmerCrop.is_available == True,
-                FarmerCrop.available_quantity > 0,
+                FarmerCrop.quantity > 0,
                 FarmerCrop.is_active == True,
             )
             .options(
@@ -430,7 +430,7 @@ def get_buyer_dashboard(
                 farmer_crop_id=fc.id,
                 farmer_name=farmer_user.full_name if farmer_user else "Farmer",
                 crop_name=fc.crop.name if fc.crop else "Unknown",
-                available_quantity=float(fc.available_quantity or 0),
+                available_quantity=float(fc.quantity or 0),
                 location=fc.farmer.district if fc.farmer else None,
                 district=fc.farmer.district if fc.farmer else None,
             ))
@@ -488,3 +488,4 @@ def get_buyer_dashboard(
         matching_farmers=matching,
         request_activity=req_activity,
     )
+

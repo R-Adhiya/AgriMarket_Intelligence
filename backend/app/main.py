@@ -12,6 +12,7 @@ from app.api.transport import router as transport_router
 from app.api.prediction import router as prediction_router
 from app.api.recommendation import router as recommendation_router
 from app.api.dashboard import router as dashboard_router
+from app.api.admin import router as admin_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -41,6 +42,7 @@ app.include_router(transport_router)
 app.include_router(prediction_router)
 app.include_router(recommendation_router)
 app.include_router(dashboard_router)
+app.include_router(admin_router)
 
 
 @app.on_event("startup")
