@@ -50,3 +50,8 @@ build/
 ml/models/*.pkl
 ml/models/*.joblib
 ml/models/*.h5
+
+# Local SQLite development database
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
