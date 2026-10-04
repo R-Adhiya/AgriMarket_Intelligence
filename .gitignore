@@ -55,3 +55,6 @@ ml/models/*.h5
 backend/*.db
 backend/*.db-shm
 backend/*.db-wal
+
+# Docker
+docker-compose.override.yml
