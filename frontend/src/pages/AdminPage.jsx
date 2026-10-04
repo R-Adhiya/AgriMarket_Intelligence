@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import {
   Users, Leaf, ShoppingBag, TrendingUp, Lightbulb, MessageSquare,
-  RefreshCw, AlertCircle, CheckCircle2, XCircle, Clock,
+  RefreshCw, AlertCircle, CheckCircle2, XCircle, Clock, Shield,
   ToggleLeft, ToggleRight, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import {
@@ -14,6 +14,7 @@ import {
   getAdminDashboard, getAdminUsers, updateUserStatus,
   getAdminFarmers, getAdminBuyers, getAdminMarkets, getAdminActivity,
 } from "../services/adminService";
+import PageHeader from "../components/PageHeader";
 
 // ---------------------------------------------------------------------------
 // Shared
@@ -134,14 +135,12 @@ export default function AdminPage() {
   const [tab, setTab] = useState("Overview");
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-5">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Monitor and manage the AgriMarket Intelligence platform.
-        </p>
-      </div>
+    <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-5">
+      <PageHeader
+        icon={Shield}
+        title="Admin Dashboard"
+        subtitle="Monitor and manage the AgriMarket Intelligence platform"
+      />
 
       {/* Tab bar */}
       <div className="flex gap-1 border-b border-gray-200">

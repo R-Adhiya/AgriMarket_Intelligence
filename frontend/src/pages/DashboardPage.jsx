@@ -129,7 +129,7 @@ function FarmerDashboard({ user }) {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-6">
       {/* Welcome */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -138,12 +138,12 @@ function FarmerDashboard({ user }) {
           </h1>
           <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
             <MapPin className="w-3.5 h-3.5" />
-            {[profile.village, profile.district, profile.state].filter(Boolean).join(", ") || "Location not set"}
+            {[profile.village, profile.district, profile.state].filter(Boolean).join(", ") || "Location not set — add it in your profile"}
           </p>
         </div>
         {!profile.has_profile && (
           <Link to={ROUTES.PROFILE}
-            className="shrink-0 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-100">
+            className="shrink-0 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
             Complete your profile
           </Link>
         )}
@@ -340,7 +340,7 @@ function BuyerDashboard({ user }) {
   const statusColors = ["#16a34a", "#d97706", "#2563eb", "#dc2626"];
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-6">
       {/* Welcome */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">

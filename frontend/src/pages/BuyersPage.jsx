@@ -11,27 +11,15 @@ import { useState, useEffect, useCallback } from "react";
 import { Users, ShoppingCart, Search, MessageSquare, Plus, CheckCircle, XCircle, Clock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
+import StatusBadge from "../components/StatusBadge";
+import PageHeader from "../components/PageHeader";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const fmt = (n) => n != null ? `₹${Number(n).toLocaleString("en-IN")}` : "—";
 const fmtQty = (n, unit = "kg") => n != null ? `${Number(n).toLocaleString("en-IN")} ${unit}` : "—";
 
-function Badge({ status }) {
-  const map = {
-    PENDING:   "bg-yellow-100 text-yellow-700",
-    ACCEPTED:  "bg-green-100 text-green-700",
-    REJECTED:  "bg-red-100 text-red-700",
-    CANCELLED: "bg-gray-100 text-gray-500",
-    ACTIVE:    "bg-green-100 text-green-700",
-    FULFILLED: "bg-blue-100 text-blue-700",
-    EXPIRED:   "bg-gray-100 text-gray-500",
-  };
-  return (
-    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-semibold ${map[status] || "bg-gray-100 text-gray-600"}`}>
-      {status}
-    </span>
-  );
-}
+// Use the shared StatusBadge (aliased locally for backward compat with existing JSX in this file)
+const Badge = ({ status }) => <StatusBadge status={status} />;
 
 function SectionTitle({ children }) {
   return <h2 className="text-base font-semibold text-gray-800 mb-3">{children}</h2>;
@@ -576,23 +564,14 @@ export default function BuyersPage() {
   const tabs = role === "BUYER" ? buyerTabs : farmerTabs;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center">
-          <Users size={18} className="text-blue-600" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-gray-900">
-            {role === "BUYER" ? "Buyer Marketplace" : "Buyer-Farmer Connect"}
-          </h1>
-          <p className="text-xs text-gray-500">
-            {role === "BUYER"
-              ? "Post requirements, find farmers, send interest requests"
-              : "Browse buyer requirements and respond to interest requests"}
-          </p>
-        </div>
-      </div>
+    <div className="p-6 sm:p-8 max-w-3xl mx-auto">
+      <PageHeader
+        icon={Users}
+        title={role === "BUYER" ? "Buyer Marketplace" : "Buyer-Farmer Connect"}
+        subtitle={role === "BUYER"
+          ? "Post requirements, find farmers, send interest requests"
+          : "Browse buyer requirements and respond to interest requests"}
+      />
 
       {/* Buyer profile card */}
       {role === "BUYER" && <BuyerProfileCard profile={profile} onRefresh={loadProfile} />}

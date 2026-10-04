@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { getCropsWithPrices, comparePrices, getPriceHistory } from "../services/marketService";
 import { getAllMarketTransport } from "../services/transportService";
+import PageHeader from "../components/PageHeader";
 
 const PERIOD_OPTIONS = [
   { label: "7 days",  value: 7  },
@@ -101,15 +102,12 @@ export default function MarketsPage() {
   const COLORS = ["#16a34a", "#2563eb", "#d97706", "#dc2626", "#7c3aed"];
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <TrendingUp size={22} className="text-green-700" />
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Market Intelligence</h1>
-          <p className="text-sm text-gray-500">Compare crop prices and transport costs across markets</p>
-        </div>
-      </div>
+    <div className="p-6 sm:p-8 max-w-5xl mx-auto space-y-6">
+      <PageHeader
+        icon={TrendingUp}
+        title="Market Intelligence"
+        subtitle="Compare crop prices and transport costs across markets"
+      />
 
       {/* Data notice */}
       <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">

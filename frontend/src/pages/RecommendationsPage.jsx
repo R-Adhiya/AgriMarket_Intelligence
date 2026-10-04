@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { getCropsWithPrices } from "../services/marketService";
 import { getRecommendation, getRecommendationHistory } from "../services/recommendationService";
+import PageHeader from "../components/PageHeader";
 
 const BASIS_OPTIONS = [
   { value: "current",   label: "Current price" },
@@ -48,15 +49,12 @@ export default function RecommendationsPage() {
   const rec = result?.recommended_market;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Lightbulb size={22} className="text-green-700" />
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Market Recommendation</h1>
-          <p className="text-sm text-gray-500">Where should I sell to get the best net return?</p>
-        </div>
-      </div>
+    <div className="p-6 sm:p-8 max-w-5xl mx-auto space-y-6">
+      <PageHeader
+        icon={Lightbulb}
+        title="Market Recommendation"
+        subtitle="Find the best market to sell your crop for maximum net return"
+      />
 
       <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
         <Info size={13} className="mt-0.5 shrink-0" />

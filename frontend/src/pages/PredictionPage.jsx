@@ -6,6 +6,7 @@ import {
 import { Brain, ChevronDown, RefreshCw, AlertCircle, Info } from "lucide-react";
 import { getCropsWithPrices, comparePrices } from "../services/marketService";
 import { getPricePrediction } from "../services/predictionService";
+import PageHeader from "../components/PageHeader";
 
 const HORIZONS = [
   { label: "Next day",  value: 1 },
@@ -85,21 +86,30 @@ export default function PredictionPage() {
   })();
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Brain size={22} className="text-green-700" />
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Price Prediction</h1>
-          <p className="text-sm text-gray-500">ML-based estimated future crop prices</p>
-        </div>
+    <div className="p-6 sm:p-8 max-w-4xl mx-auto space-y-6">
+      <PageHeader
+        icon={Brain}
+        title="Price Prediction"
+        subtitle="ML-based estimated future crop prices"
+      />
+
+      {/* Observed vs Estimated legend */}
+      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+        <span className="flex items-center gap-1.5">
+          <span className="w-6 h-0.5 bg-green-600 rounded inline-block" />
+          Observed (actual recorded price)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-6 h-0.5 bg-blue-500 rounded inline-block border-dashed" style={{borderTop:'2px dashed #3b82f6', background:'none'}} />
+          Estimated (ML prediction — not a guarantee)
+        </span>
       </div>
 
       {/* Disclaimer */}
       <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-        <Info size={13} className="mt-0.5 shrink-0" />
+        <Info size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
         Predictions are estimates based on available historical data and should not
-        be treated as guaranteed market prices. Trained on synthetic development data only.
+        be treated as guaranteed market prices. This model is trained on synthetic development data only.
       </div>
 
       {/* Controls */}
