@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    # CORS
+    # CORS — separate from CORS_ORIGINS list for explicit frontend origin
+    FRONTEND_URL: str = "http://localhost:5173"
     CORS_ORIGINS: List[str] = ["http://localhost:5173"]
 
     # Admin seed (development only)
@@ -29,6 +30,9 @@ class Settings(BaseSettings):
     TRANSPORT_BASE_COST: float = 200.0      # INR — minimum truck hire charge
     TRANSPORT_RATE_PER_KM: float = 2.5      # INR per km per quintal-equivalent
     TRANSPORT_QUANTITY_UNIT: str = "quintal"
+
+    # Logging
+    LOG_LEVEL: str = "INFO"
 
     class Config:
         env_file = ".env"

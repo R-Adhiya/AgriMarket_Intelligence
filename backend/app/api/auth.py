@@ -8,8 +8,12 @@ Authentication API routes.
   GET  /api/auth/test/admin
 """
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 from app.api.deps import get_current_user, require_role
 from app.core.security import create_access_token, hash_password, verify_password
@@ -79,10 +83,13 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     )
 
     if not user or not user.password_hash:
+        logger.warning("Login failed: email not found")
         raise invalid
     if not verify_password(payload.password, user.password_hash):
+        logger.warning("Login failed: wrong password for user_id=%s", user.id if user else "?")
         raise invalid
     if not user.is_active:
+        logger.warning("Login failed: inactive account user_id=%s", user.id)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Account is inactive.",
