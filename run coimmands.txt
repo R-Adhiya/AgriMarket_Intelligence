@@ -1,0 +1,6 @@
+cd C:\Users\Adhiya\.kiro\crew\workspace\backend
+.venv\Scripts\activate
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+cd C:\Users\Adhiya\.kiro\crew\workspace\frontend
+npm run dev

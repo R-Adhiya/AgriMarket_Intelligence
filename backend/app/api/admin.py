@@ -587,7 +587,7 @@ def recent_activity(
     for r in reqs:
         items.append(ActivityItem(
             kind="requirement",
-            description=f"Buyer requirement: {r.crop.name if r.crop else '?'} ({r.quantity_kg} kg)",
+            description=f"Buyer requirement: {r.crop.name if r.crop else '?'} ({r.quantity} kg)",
             timestamp=_ts(r.created_at),
         ))
 
@@ -610,3 +610,97 @@ def recent_activity(
     return ActivityResponse(items=items[:limit])
 
 
+
+
+# ── Correction 5: Crop suggestion management (admin) ─────────────────────────
+
+from app.models.crop_suggestion import CropSuggestion, SuggestionStatus
+from app.models.crop import CropUnit
+
+
+class CropSuggestionResponse(BaseModel):
+    id: int
+    suggested_name: str
+    category: Optional[str] = None
+    notes: Optional[str] = None
+    status: str
+    admin_notes: Optional[str] = None
+    approved_crop_id: Optional[int] = None
+    suggested_by_user_id: Optional[int] = None
+
+    model_config = {"from_attributes": True}
+
+
+class CropSuggestionAction(BaseModel):
+    action: str          # "approve" | "reject"
+    admin_notes: Optional[str] = None
+    category: Optional[str] = None   # used when approving to set the crop category
+
+
+@router.get(
+    "/crop-suggestions",
+    response_model=list[CropSuggestionResponse],
+    summary="List crop suggestions (filterable by status)",
+)
+def list_crop_suggestions(
+    status: Optional[str] = Query(None, description="PENDING | APPROVED | REJECTED"),
+    db: Session = Depends(get_db),
+):
+    q = db.query(CropSuggestion)
+    if status:
+        q = q.filter(CropSuggestion.status == status.upper())
+    return q.order_by(CropSuggestion.created_at.desc()).all()
+
+
+@router.post(
+    "/crop-suggestions/{suggestion_id}/review",
+    response_model=CropSuggestionResponse,
+    summary="Approve or reject a crop suggestion",
+)
+def review_crop_suggestion(
+    suggestion_id: int,
+    payload: CropSuggestionAction,
+    db: Session = Depends(get_db),
+):
+    suggestion = db.query(CropSuggestion).filter_by(id=suggestion_id).first()
+    if not suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found.")
+    if suggestion.status != SuggestionStatus.PENDING:
+        raise HTTPException(status_code=400, detail=f"Suggestion is already {suggestion.status}.")
+
+    if payload.action.lower() == "approve":
+        # Case-insensitive duplicate check
+        existing = (
+            db.query(Crop)
+            .filter(func.lower(Crop.name) == suggestion.suggested_name.strip().lower())
+            .first()
+        )
+        if existing:
+            raise HTTPException(
+                status_code=409,
+                detail=f"A crop named '{existing.name}' already exists (id={existing.id}).",
+            )
+
+        new_crop = Crop(
+            name=suggestion.suggested_name.strip(),
+            category=payload.category or suggestion.category,
+            unit=CropUnit.KG,
+            is_active=True,
+        )
+        db.add(new_crop)
+        db.flush()   # get the id without committing
+
+        suggestion.status = SuggestionStatus.APPROVED
+        suggestion.approved_crop_id = new_crop.id
+        suggestion.admin_notes = payload.admin_notes
+
+    elif payload.action.lower() == "reject":
+        suggestion.status = SuggestionStatus.REJECTED
+        suggestion.admin_notes = payload.admin_notes
+
+    else:
+        raise HTTPException(status_code=400, detail="action must be 'approve' or 'reject'.")
+
+    db.commit()
+    db.refresh(suggestion)
+    return suggestion

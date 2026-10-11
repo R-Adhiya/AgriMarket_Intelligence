@@ -123,6 +123,26 @@ function MyRequirements({ crops }) {
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
 
+  // Crop suggestion state
+  const [showSuggest, setShowSuggest] = useState(false);
+  const [suggestName, setSuggestName] = useState("");
+  const [suggestNotes, setSuggestNotes] = useState("");
+  const [suggestSaving, setSuggestSaving] = useState(false);
+  const [suggestMsg, setSuggestMsg] = useState({ type: "", text: "" });
+
+  async function submitSuggestion() {
+    if (!suggestName.trim()) return;
+    setSuggestSaving(true); setSuggestMsg({ type: "", text: "" });
+    try {
+      await api.post("/api/crops/suggest", { name: suggestName.trim(), notes: suggestNotes.trim() || undefined });
+      setSuggestMsg({ type: "success", text: `"${suggestName.trim()}" submitted for admin review. You can use it after approval.` });
+      setSuggestName(""); setSuggestNotes("");
+    } catch (e) {
+      const detail = e.response?.data?.detail;
+      setSuggestMsg({ type: "error", text: typeof detail === "string" ? detail : "Failed to submit suggestion." });
+    } finally { setSuggestSaving(false); }
+  }
+
   const load = useCallback(async () => {
     try { const r = await api.get("/api/buyer/requirements"); setReqs(r.data); } catch {}
   }, []);
@@ -176,6 +196,16 @@ function MyRequirements({ crops }) {
                 <option value="">Select crop</option>
                 {crops.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Can't find your crop?{" "}
+                <button
+                  type="button"
+                  className="text-brand-600 hover:underline font-medium"
+                  onClick={() => setShowSuggest(true)}
+                >
+                  Suggest a new crop
+                </button>
+              </p>
             </div>
             <div>
               <label className="text-xs text-gray-500">Quantity (kg)</label>
@@ -211,6 +241,50 @@ function MyRequirements({ crops }) {
             <button onClick={createReq} disabled={saving} className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50">{saving ? "Saving…" : "Post Requirement"}</button>
             <button onClick={() => setShowForm(false)} className="px-3 py-1.5 text-xs text-gray-600 hover:underline">Cancel</button>
           </div>
+        </div>
+      )}
+
+      {/* Crop suggestion panel */}
+      {showSuggest && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm font-semibold text-amber-800">Suggest a new crop</p>
+            <button onClick={() => { setShowSuggest(false); setSuggestMsg({ type: "", text: "" }); }} className="text-xs text-gray-400 hover:text-gray-700">✕ Close</button>
+          </div>
+          <p className="text-xs text-amber-700 mb-3">An admin will review your suggestion. Once approved, the crop will appear in the selector.</p>
+          <div className="space-y-2">
+            <div>
+              <label className="text-xs text-gray-600 font-medium">Crop name *</label>
+              <input
+                className="form-input mt-0.5 text-sm"
+                placeholder="e.g. Brinjal"
+                value={suggestName}
+                onChange={e => setSuggestName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-600">Why add this crop? (optional)</label>
+              <textarea
+                rows={2}
+                className="form-input mt-0.5 text-sm resize-none"
+                placeholder="e.g. Common in our region but not listed"
+                value={suggestNotes}
+                onChange={e => setSuggestNotes(e.target.value)}
+              />
+            </div>
+          </div>
+          {suggestMsg.text && (
+            <p className={`mt-2 text-xs font-medium ${suggestMsg.type === "success" ? "text-brand-600" : "text-red-600"}`}>
+              {suggestMsg.text}
+            </p>
+          )}
+          <button
+            onClick={submitSuggestion}
+            disabled={suggestSaving || !suggestName.trim()}
+            className="mt-3 px-3 py-1.5 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700 disabled:opacity-50"
+          >
+            {suggestSaving ? "Submitting…" : "Submit suggestion"}
+          </button>
         </div>
       )}
 
@@ -748,9 +822,10 @@ export default function BuyersPage() {
 
   useEffect(() => {
     loadProfile();
-    api.get("/api/market/crops").then(r => setCrops(r.data)).catch(() => {
-      // fallback: fetch all crops if market endpoint fails
-      api.get("/api/farmer/crops").then(r => setCrops(r.data)).catch(() => {});
+    // Load ALL active crops from the catalog (not just priced ones)
+    api.get("/api/crops").then(r => setCrops(r.data)).catch(() => {
+      // fallback to market crops if crops endpoint unavailable
+      api.get("/api/market/crops").then(r => setCrops(r.data)).catch(() => {});
     });
   }, [loadProfile]);
 

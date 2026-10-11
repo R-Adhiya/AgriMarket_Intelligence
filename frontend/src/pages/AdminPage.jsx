@@ -120,7 +120,7 @@ function Paginator({ page, total, pageSize, onChange }) {
 // Tab definitions
 // ---------------------------------------------------------------------------
 
-const TABS = ["Overview", "Users", "Farmers", "Buyers", "Markets", "Activity"];
+const TABS = ["Overview", "Users", "Farmers", "Buyers", "Markets", "Crop Suggestions", "Activity"];
 
 // ---------------------------------------------------------------------------
 // Main Component
@@ -159,12 +159,13 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {tab === "Overview"  && <OverviewTab />}
-      {tab === "Users"     && <UsersTab />}
-      {tab === "Farmers"   && <FarmersTab />}
-      {tab === "Buyers"    && <BuyersTab />}
-      {tab === "Markets"   && <MarketsTab />}
-      {tab === "Activity"  && <ActivityTab />}
+      {tab === "Overview"         && <OverviewTab />}
+      {tab === "Users"            && <UsersTab />}
+      {tab === "Farmers"          && <FarmersTab />}
+      {tab === "Buyers"           && <BuyersTab />}
+      {tab === "Markets"          && <MarketsTab />}
+      {tab === "Crop Suggestions" && <CropSuggestionsTab />}
+      {tab === "Activity"         && <ActivityTab />}
     </div>
   );
 }
@@ -609,5 +610,118 @@ function ActivityTab() {
         )
       )}
     </SectionCard>
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// Crop Suggestions Tab (Correction 5)
+// ---------------------------------------------------------------------------
+
+function CropSuggestionsTab() {
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [filter, setFilter]           = useState("PENDING");
+  const [acting, setActing]           = useState({});
+  const [msg, setMsg]                 = useState({});
+
+  async function load() {
+    setLoading(true);
+    try {
+      const r = await api.get(`/api/admin/crop-suggestions?status=${filter}`);
+      setSuggestions(r.data);
+    } catch {}
+    finally { setLoading(false); }
+  }
+
+  useEffect(() => { load(); }, [filter]);
+
+  async function review(id, action, adminNotes = "") {
+    setActing(a => ({ ...a, [id]: action }));
+    try {
+      await api.post(`/api/admin/crop-suggestions/${id}/review`, { action, admin_notes: adminNotes || undefined });
+      setMsg(m => ({ ...m, [id]: action === "approve" ? "✓ Approved — crop added to catalog" : "✗ Rejected" }));
+      load();
+    } catch (e) {
+      const detail = e.response?.data?.detail;
+      setMsg(m => ({ ...m, [id]: typeof detail === "string" ? detail : "Action failed." }));
+    } finally {
+      setActing(a => ({ ...a, [id]: null }));
+    }
+  }
+
+  const statusColors = {
+    PENDING:  "badge-pending",
+    APPROVED: "badge-accepted",
+    REJECTED: "badge-rejected",
+  };
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <div className="flex items-center gap-3">
+        <p className="text-sm font-semibold text-neutral-700">Crop Suggestions</p>
+        <div className="flex gap-1">
+          {["PENDING", "APPROVED", "REJECTED"].map(s => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 py-1 text-xs rounded-full border font-medium transition-colors ${
+                filter === s
+                  ? "bg-brand-600 text-white border-brand-600"
+                  : "border-neutral-200 text-neutral-500 hover:border-brand-600 hover:text-brand-600"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <button onClick={load} className="ml-auto text-xs text-neutral-400 hover:text-brand-600">↻ Refresh</button>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-10"><div className="spinner" /></div>
+      ) : suggestions.length === 0 ? (
+        <div className="empty-state">
+          <p className="text-sm text-neutral-400">No {filter.toLowerCase()} suggestions.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {suggestions.map(s => (
+            <div key={s.id} className="card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-semibold text-neutral-900">{s.suggested_name}</span>
+                    <span className={statusColors[s.status] || "badge"}>{s.status}</span>
+                    {s.approved_crop_id && <span className="text-xs text-brand-600">Crop ID: {s.approved_crop_id}</span>}
+                  </div>
+                  {s.notes && <p className="text-xs text-neutral-500 italic mb-1">"{s.notes}"</p>}
+                  {s.admin_notes && <p className="text-xs text-neutral-400">Admin note: {s.admin_notes}</p>}
+                  {msg[s.id] && <p className="text-xs font-medium text-brand-600 mt-1">{msg[s.id]}</p>}
+                </div>
+                {s.status === "PENDING" && (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => review(s.id, "approve")}
+                      disabled={!!acting[s.id]}
+                      className="px-3 py-1.5 bg-brand-600 text-white text-xs rounded-lg hover:bg-brand-700 disabled:opacity-50"
+                    >
+                      {acting[s.id] === "approve" ? "…" : "Approve"}
+                    </button>
+                    <button
+                      onClick={() => review(s.id, "reject")}
+                      disabled={!!acting[s.id]}
+                      className="px-3 py-1.5 bg-red-100 text-red-700 text-xs rounded-lg hover:bg-red-200 disabled:opacity-50"
+                    >
+                      {acting[s.id] === "reject" ? "…" : "Reject"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

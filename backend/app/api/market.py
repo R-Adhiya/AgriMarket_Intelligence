@@ -95,6 +95,44 @@ def list_crops_with_prices(db: Session = Depends(get_db)):
     return crops
 
 
+@router.get(
+    "/all-crops",
+    response_model=list[CropSummary],
+    summary="List ALL active crops in the catalog (regardless of price data)",
+)
+def list_all_crops(db: Session = Depends(get_db)):
+    """
+    Returns every active crop in the reference catalog.
+    Used by buyer requirement forms and farmer crop management.
+    Unlike /crops, not filtered to crops that have market prices.
+    """
+    return (
+        db.query(Crop)
+        .filter(Crop.is_active == True)  # noqa: E712
+        .order_by(Crop.name)
+        .all()
+    )
+
+
+@router.get(
+    "/all-crops",
+    response_model=list[CropSummary],
+    summary="List ALL active crops in the catalog (regardless of price data)",
+)
+def list_all_crops(db: Session = Depends(get_db)):
+    """
+    Returns every active crop in the reference catalog.
+    Used by buyer requirement forms, farmer crop management etc.
+    Unlike /crops, this is not filtered to crops that have market prices.
+    """
+    return (
+        db.query(Crop)
+        .filter(Crop.is_active == True)  # noqa: E712
+        .order_by(Crop.name)
+        .all()
+    )
+
+
 # ── All recent prices ─────────────────────────────────────────────────────────
 
 @router.get(

@@ -10,6 +10,7 @@ from app.models.market_price import MarketPrice
 from app.models.buyer_requirement import BuyerRequirement, RequirementStatus
 from app.models.recommendation import Recommendation
 from app.models.transaction_interest import TransactionInterest, InterestStatus
+from app.models.crop_suggestion import CropSuggestion, SuggestionStatus
 
 __all__ = [
     "User", "UserRole",
@@ -22,4 +23,5 @@ __all__ = [
     "BuyerRequirement", "RequirementStatus",
     "Recommendation",
     "TransactionInterest", "InterestStatus",
+    "CropSuggestion", "SuggestionStatus",
 ]
