@@ -6,6 +6,7 @@ import {
 import { getCropsWithPrices } from "../services/marketService";
 import { getRecommendation, getRecommendationHistory } from "../services/recommendationService";
 import PageHeader from "../components/PageHeader";
+import CropImage from "../components/CropImage";
 
 const BASIS_OPTIONS = [
   { value: "current",   label: "Current price" },
@@ -116,11 +117,16 @@ export default function RecommendationsPage() {
           {/* Recommended market hero */}
           {rec ? (
             <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-              <div className="flex items-center gap-2 mb-1">
-                <CheckCircle size={18} className="text-green-600" />
-                <span className="text-sm font-semibold text-green-700 uppercase tracking-wide">Recommended Market</span>
+              <div className="flex items-center gap-3 mb-1">
+                <CropImage crop={rec.crop_name || crop?.name} size={40} rounded="rounded-lg" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={18} className="text-green-600" />
+                    <span className="text-sm font-semibold text-green-700 uppercase tracking-wide">Recommended Market</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-0">{rec.market_name}</h2>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">{rec.market_name}</h2>
               <p className="text-sm text-gray-500 mb-4">
                 {[rec.district, rec.state].filter(Boolean).join(", ")} · {priceBasis === "predicted" ? "Estimated" : "Current"} price: ₹{rec.price_per_unit}/{rec.price_unit}
               </p>
@@ -215,7 +221,12 @@ export default function RecommendationsPage() {
                 {history.slice(0, 5).map((h) => (
                   <tr key={h.id} className="border-b border-gray-50 last:border-0">
                     <td className="py-2 text-gray-500 text-xs">{h.created_at.slice(0, 10)}</td>
-                    <td className="py-2 text-gray-700">{h.crop_name}</td>
+                    <td className="py-2">
+                      <div className="flex items-center gap-1.5">
+                        <CropImage crop={h.crop_name} size={20} rounded="rounded" />
+                        <span className="text-gray-700">{h.crop_name}</span>
+                      </div>
+                    </td>
                     <td className="py-2 text-gray-700">{h.market_name}</td>
                     <td className="py-2 text-right font-medium text-green-700">
                       {h.expected_net_revenue ? `₹${h.expected_net_revenue.toLocaleString()}` : "—"}

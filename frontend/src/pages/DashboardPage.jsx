@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { getFarmerDashboard, getBuyerDashboard } from "../services/dashboardService";
 import { ROUTES } from "../constants/routes";
+import CropImage from "../components/CropImage";
 
 // ---------------------------------------------------------------------------
 // Shared
@@ -263,7 +264,12 @@ function FarmerDashboard({ user }) {
               <tbody>
                 {buyer_opportunities.map((opp) => (
                   <tr key={opp.requirement_id} className="border-b border-gray-50 hover:bg-gray-50">
-                    <td className="py-2 pr-3 font-medium text-gray-900">{opp.crop_name}</td>
+                    <td className="py-2 pr-3">
+                      <div className="flex items-center gap-2">
+                        <CropImage crop={opp.crop_name} size={24} rounded="rounded" />
+                        <span className="font-medium text-gray-900">{opp.crop_name}</span>
+                      </div>
+                    </td>
                     <td className="py-2 pr-3 text-right text-gray-600">{opp.quantity_kg.toLocaleString()}</td>
                     <td className="py-2 pr-3 text-right text-green-700 font-medium">
                       {opp.desired_price ? `₹${opp.desired_price}/kg` : "—"}

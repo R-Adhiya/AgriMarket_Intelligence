@@ -8,6 +8,7 @@ import {
 import { getCropsWithPrices, comparePrices, getPriceHistory } from "../services/marketService";
 import { getAllMarketTransport } from "../services/transportService";
 import PageHeader from "../components/PageHeader";
+import CropImage from "../components/CropImage";
 
 const PERIOD_OPTIONS = [
   { label: "7 days",  value: 7  },
@@ -165,9 +166,12 @@ export default function MarketsPage() {
       {selectedCrop && (
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-800 flex items-center gap-2">
-              <BarChart3 size={16} className="text-green-700" />
-              Current Market Prices — {selectedCrop.name}
+            <h2 className="font-semibold text-gray-800 flex items-center gap-2.5">
+              <CropImage crop={selectedCrop.name} size={32} rounded="rounded-md" />
+              <span className="flex items-center gap-1.5">
+                <BarChart3 size={16} className="text-green-700" />
+                Current Market Prices — {selectedCrop.name}
+              </span>
             </h2>
             {(loading || transportLoading) && <RefreshCw size={14} className="animate-spin text-gray-400" />}
           </div>

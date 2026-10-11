@@ -152,40 +152,89 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="flex-none py-20 sm:py-28 px-4 bg-gradient-to-b from-green-50/70 to-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700
-                           bg-green-100 px-3 py-1 rounded-full mb-6">
-            <Leaf className="w-3.5 h-3.5" aria-hidden="true" />
-            Agricultural Technology Platform
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight
-                         leading-[1.1] max-w-3xl mx-auto">
-            Directly from the Farm<br className="hidden sm:block" />
-            <span className="text-green-700"> to Your Hands</span>
-          </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            AgriMarket Intelligence helps farmers compare markets, understand price trends,
-            get smart recommendations, and connect directly with buyers — no middlemen required.
+      <section className="flex-none relative overflow-hidden">
+        {/* Background farm image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1400&h=700&fit=crop&auto=format&q=60"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+          />
+          {/* Overlay: light gradient so text stays readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/80 to-white/95" />
+        </div>
+
+        <div className="relative z-10 py-20 sm:py-28 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700
+                             bg-green-100 px-3 py-1 rounded-full mb-6">
+              <Leaf className="w-3.5 h-3.5" aria-hidden="true" />
+              Agricultural Technology Platform
+            </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight
+                           leading-[1.1] max-w-3xl mx-auto">
+              Directly from the Farm<br className="hidden sm:block" />
+              <span className="text-green-700"> to Your Hands</span>
+            </h1>
+            <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              AgriMarket Intelligence helps farmers compare markets, understand price trends,
+              get smart recommendations, and connect directly with buyers — no middlemen required.
+            </p>
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                to="/register"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
+                           bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800
+                           transition-colors shadow-sm text-sm"
+              >
+                Join as Farmer or Buyer
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+              <Link
+                to="/login"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
+                           border border-gray-300 text-gray-700 font-semibold rounded-xl
+                           hover:bg-gray-50 transition-colors text-sm"
+              >
+                Sign in to your account
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Crop Showcase ── */}
+      <section className="py-10 px-4 bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center mb-6">
+            Supported crops
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              to="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
-                         bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800
-                         transition-colors shadow-sm text-sm"
-            >
-              Join as Farmer or Buyer
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-            <Link
-              to="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
-                         border border-gray-300 text-gray-700 font-semibold rounded-xl
-                         hover:bg-gray-50 transition-colors text-sm"
-            >
-              Sign in to your account
-            </Link>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
+            {[
+              { name: "Tomato",  url: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=80&h=80&fit=crop&auto=format&q=75" },
+              { name: "Onion",   url: "https://images.unsplash.com/photo-1587049352851-8d4e89133924?w=80&h=80&fit=crop&auto=format&q=75" },
+              { name: "Potato",  url: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=80&h=80&fit=crop&auto=format&q=75" },
+              { name: "Rice",    url: "https://images.unsplash.com/photo-1536304993881-ff86e0c9b1b5?w=80&h=80&fit=crop&auto=format&q=75" },
+              { name: "Banana",  url: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=80&h=80&fit=crop&auto=format&q=75" },
+            ].map(({ name, url }) => (
+              <div key={name} className="flex flex-col items-center gap-2">
+                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm">
+                  <img
+                    src={url}
+                    alt={`${name} crop`}
+                    width={56}
+                    height={56}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-xs text-gray-500 font-medium">{name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -251,6 +300,17 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
+              <div className="rounded-xl overflow-hidden mb-4 -mx-2 -mt-2">
+                <img
+                  src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=220&fit=crop&auto=format&q=70"
+                  alt="Indian farmer in a green field"
+                  width={600}
+                  height={220}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-36 object-cover"
+                />
+              </div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                 Sample Recommendation
               </h3>
@@ -284,6 +344,17 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-3">
+              <div className="rounded-xl overflow-hidden -mx-2 -mt-2 mb-3">
+                <img
+                  src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&h=200&fit=crop&auto=format&q=70"
+                  alt="Fresh vegetables at an agricultural market"
+                  width={600}
+                  height={200}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-32 object-cover"
+                />
+              </div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                 Active Requirement
               </h3>
