@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Numeric, String
+from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base, TimestampMixin
@@ -20,6 +20,10 @@ class Buyer(Base, TimestampMixin):
     state: Mapped[str | None] = mapped_column(String(255), nullable=True)
     latitude: Mapped[float | None] = mapped_column(Numeric(9, 6), nullable=True)
     longitude: Mapped[float | None] = mapped_column(Numeric(9, 6), nullable=True)
+
+    # Verification — Correction 7
+    completed_transaction_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="buyer_profile")  # noqa: F821

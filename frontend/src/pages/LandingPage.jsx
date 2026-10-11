@@ -66,6 +66,7 @@ export default function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Scroll-triggered entrance refs
+  const videoRef    = useInView();
   const cropRef     = useInView();
   const featuresRef = useInView();
   const farmersRef  = useInView();
@@ -213,6 +214,93 @@ export default function LandingPage() {
                 Sign in to your account
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Promotional Video ── */}
+      <section
+        className="py-16 px-4 bg-gradient-to-b from-white to-cream-100"
+        aria-labelledby="video-section-heading"
+      >
+        <div ref={videoRef} className="max-w-4xl mx-auto inview-hidden">
+          {/* Heading */}
+          <div className="text-center mb-8">
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-brand-600 mb-3">
+              See it in action
+            </span>
+            <h2
+              id="video-section-heading"
+              className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3"
+            >
+              Discover AgriMarket Intelligence
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
+              Watch how farmers compare market prices, get ML-powered forecasts, receive smart recommendations,
+              and connect directly with verified buyers — all in one platform.
+            </p>
+          </div>
+
+          {/* Video container */}
+          <div className="relative rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-gray-900">
+            {/* 16:9 aspect-ratio wrapper */}
+            <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+              <video
+                className="absolute inset-0 w-full h-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                aria-label="AgriMarket Intelligence promotional video showing market price comparison, price prediction, smart recommendations, and buyer-farmer connections"
+              >
+                <source src="/videos/agrimarket-intro.mp4" type="video/mp4" />
+                {/* Accessible fallback */}
+                <p className="p-8 text-white text-center text-sm">
+                  Your browser does not support HTML5 video.{" "}
+                  <a
+                    href="/videos/agrimarket-intro.mp4"
+                    download
+                    className="underline text-lime-400 hover:text-white transition-colors"
+                  >
+                    Download the video
+                  </a>{" "}
+                  to watch it.
+                </p>
+              </video>
+            </div>
+
+            {/* Bottom caption bar */}
+            <div className="bg-gray-900/95 px-5 py-3 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <span className="flex items-center justify-center w-7 h-7 bg-brand-600 rounded-md shrink-0">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+                  </svg>
+                </span>
+                <span className="text-white text-xs font-semibold">AgriMarket Intelligence</span>
+              </div>
+              <span className="text-gray-400 text-xs hidden sm:block">
+                Agricultural market intelligence &amp; direct farmer-buyer connections
+              </span>
+            </div>
+          </div>
+
+          {/* CTA row below video */}
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold
+                         rounded-xl hover:bg-brand-700 hover:shadow-md transition-all duration-200 active:scale-[0.97]"
+            >
+              Get started free
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+            <a
+              href="#features"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600
+                         transition-colors duration-200 font-medium"
+            >
+              Explore all features
+            </a>
           </div>
         </div>
       </section>

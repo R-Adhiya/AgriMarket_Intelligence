@@ -86,6 +86,8 @@ class UserRow(BaseModel):
     email: str
     role: str
     is_active: bool
+    is_verified: bool
+    completed_transaction_count: int
     created_at: str
 
 
@@ -293,11 +295,43 @@ def admin_dashboard(db: Session = Depends(get_db)):
 def list_users(
     role: Optional[str] = Query(None, description="Filter by role: FARMER, BUYER, ADMIN"),
     is_active: Optional[bool] = Query(None),
+    is_verified: Optional[bool] = Query(None, description="Filter by verification status (FARMER/BUYER only)"),
+    search: Optional[str] = Query(None, description="Search by name or email (case-insensitive)"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
-    q = db.query(User)
+    from sqlalchemy import or_, case, literal, and_
+
+    # Build a subquery that assigns is_verified to each user via OUTER JOINs to
+    # farmers and buyers.  This lets us filter AND paginate in one DB round-trip
+    # so that `total` and `items` are always consistent.
+
+    # Left-join User → Farmer, User → Buyer; the actual is_verified value comes
+    # from whichever profile row exists (at most one of them for a given user).
+    farmer_alias = Farmer.__table__.alias("fa")
+    buyer_alias  = Buyer.__table__.alias("ba")
+
+    q = (
+        db.query(
+            User,
+            case(
+                (farmer_alias.c.is_verified.isnot(None), farmer_alias.c.is_verified),
+                (buyer_alias.c.is_verified.isnot(None),  buyer_alias.c.is_verified),
+                else_=literal(False),
+            ).label("eff_verified"),
+            case(
+                (farmer_alias.c.completed_transaction_count.isnot(None),
+                 farmer_alias.c.completed_transaction_count),
+                (buyer_alias.c.completed_transaction_count.isnot(None),
+                 buyer_alias.c.completed_transaction_count),
+                else_=literal(0),
+            ).label("eff_count"),
+        )
+        .outerjoin(farmer_alias, farmer_alias.c.user_id == User.id)
+        .outerjoin(buyer_alias,  buyer_alias.c.user_id  == User.id)
+    )
+
     if role:
         try:
             q = q.filter(User.role == UserRole(role.upper()))
@@ -305,23 +339,40 @@ def list_users(
             raise HTTPException(status_code=422, detail=f"Invalid role: {role}")
     if is_active is not None:
         q = q.filter(User.is_active == is_active)
+    if search:
+        like = f"%{search.strip()}%"
+        q = q.filter(or_(User.full_name.ilike(like), User.email.ilike(like)))
+    if is_verified is not None:
+        # Filter on the effective verified flag computed in the query
+        verified_expr = case(
+            (farmer_alias.c.is_verified.isnot(None), farmer_alias.c.is_verified),
+            (buyer_alias.c.is_verified.isnot(None),  buyer_alias.c.is_verified),
+            else_=literal(False),
+        )
+        q = q.filter(verified_expr == is_verified)
+
     total = q.count()
-    items = q.order_by(User.id).offset((page - 1) * page_size).limit(page_size).all()
+    rows_raw = q.order_by(User.id).offset((page - 1) * page_size).limit(page_size).all()
+
+    items = [
+        UserRow(
+            id=u.id,
+            full_name=u.full_name,
+            email=u.email,
+            role=u.role.value,
+            is_active=u.is_active,
+            is_verified=bool(eff_v),
+            completed_transaction_count=int(eff_c or 0),
+            created_at=_ts(u.created_at),
+        )
+        for u, eff_v, eff_c in rows_raw
+    ]
+
     return UserListResponse(
         total=total,
         page=page,
         page_size=page_size,
-        items=[
-            UserRow(
-                id=u.id,
-                full_name=u.full_name,
-                email=u.email,
-                role=u.role.value,
-                is_active=u.is_active,
-                created_at=_ts(u.created_at),
-            )
-            for u in items
-        ],
+        items=items,
     )
 
 

@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import {
   Users, Leaf, ShoppingBag, TrendingUp, Lightbulb, MessageSquare,
   RefreshCw, AlertCircle, CheckCircle2, XCircle, Clock, Shield,
-  ToggleLeft, ToggleRight, ChevronLeft, ChevronRight,
+  ToggleLeft, ToggleRight, ChevronLeft, ChevronRight, ShieldCheck, Search,
 } from "lucide-react";
 import {
   ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar,
@@ -278,31 +278,48 @@ function OverviewTab() {
 // ---------------------------------------------------------------------------
 
 function UsersTab() {
-  const [data, setData]     = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState(false);
-  const [page, setPage]     = useState(1);
-  const [roleFilter, setRoleFilter] = useState("");
-  const [confirm, setConfirm] = useState(null); // {id, is_active, name}
+  const [data, setData]         = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(false);
+  const [page, setPage]         = useState(1);
+  const [roleFilter, setRoleFilter]     = useState("");
+  const [verifiedFilter, setVerifiedFilter] = useState(""); // "" | "true" | "false"
+  const [searchQuery, setSearchQuery]   = useState("");
+  const [searchInput, setSearchInput]   = useState("");
 
-  const load = (p = page, rf = roleFilter) => {
+  const load = (p = page, rf = roleFilter, vf = verifiedFilter, sq = searchQuery) => {
     setLoading(true);
     setError(false);
     const params = { page: p, page_size: 20 };
     if (rf) params.role = rf;
+    if (vf !== "") params.is_verified = vf;
+    if (sq) params.search = sq;
     getAdminUsers(params)
       .then(setData)
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(1, roleFilter); setPage(1); }, [roleFilter]);
+  useEffect(() => {
+    load(1, roleFilter, verifiedFilter, searchQuery);
+    setPage(1);
+  }, [roleFilter, verifiedFilter, searchQuery]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+  };
 
   const handleStatusChange = async (id, newActive, name) => {
     if (!window.confirm(`${newActive ? "Activate" : "Deactivate"} ${name}?`)) return;
     try {
       await updateUserStatus(id, newActive);
-      load(page, roleFilter);
+      load(page, roleFilter, verifiedFilter, searchQuery);
     } catch {
       alert("Failed to update user status.");
     }
@@ -310,25 +327,71 @@ function UsersTab() {
 
   return (
     <SectionCard title="User Management">
-      <div className="flex gap-2 mb-4">
-        {["", "FARMER", "BUYER", "ADMIN"].map(r => (
-          <button key={r}
-            onClick={() => setRoleFilter(r)}
-            className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
-              roleFilter === r
-                ? "bg-brand-600 text-white border-brand-600"
-                : "bg-white text-gray-600 border-gray-300 hover:border-green-400"
-            }`}
-          >
-            {r || "All"}
-          </button>
-        ))}
+      {/* Search bar */}
+      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            placeholder="Search by name or email…"
+            className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 rounded-lg
+                       focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+          {searchInput && (
+            <button type="button" onClick={clearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <XCircle className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+        <button type="submit"
+          className="px-3 py-1.5 bg-brand-600 text-white text-xs font-medium rounded-lg
+                     hover:bg-brand-700 transition">
+          Search
+        </button>
+      </form>
+
+      {/* Filter chips */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex gap-1.5">
+          {["", "FARMER", "BUYER", "ADMIN"].map(r => (
+            <button key={r}
+              onClick={() => { setRoleFilter(r); }}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
+                roleFilter === r
+                  ? "bg-brand-600 text-white border-brand-600"
+                  : "bg-white text-gray-600 border-gray-300 hover:border-brand-400"
+              }`}
+            >
+              {r || "All roles"}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-1.5 border-l pl-2 ml-1">
+          {[["", "All"], ["true", "✓ Verified"], ["false", "Unverified"]].map(([val, label]) => (
+            <button key={val}
+              onClick={() => setVerifiedFilter(val)}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
+                verifiedFilter === val
+                  ? val === "true"
+                    ? "bg-lime-500 text-white border-lime-500"
+                    : "bg-gray-500 text-white border-gray-500"
+                  : "bg-white text-gray-600 border-gray-300 hover:border-brand-400"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading && <Loading />}
-      {error   && <ErrorMsg onRetry={() => load(page, roleFilter)} />}
+      {error   && <ErrorMsg onRetry={() => load(page, roleFilter, verifiedFilter, searchQuery)} />}
       {!loading && !error && data && (
         <>
+          <p className="text-xs text-gray-400 mb-2">{data.total} user{data.total !== 1 ? "s" : ""} found</p>
           {data.items.length === 0 ? <Empty /> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -337,6 +400,8 @@ function UsersTab() {
                     <th className="text-left py-2 pr-3">Name</th>
                     <th className="text-left py-2 pr-3">Email</th>
                     <th className="text-left py-2 pr-3">Role</th>
+                    <th className="text-left py-2 pr-3">Verified</th>
+                    <th className="text-left py-2 pr-3">Transactions</th>
                     <th className="text-left py-2 pr-3">Status</th>
                     <th className="text-left py-2 pr-3">Joined</th>
                     <th className="text-left py-2">Actions</th>
@@ -345,9 +410,35 @@ function UsersTab() {
                 <tbody>
                   {data.items.map(u => (
                     <tr key={u.id} className="border-b border-gray-50 hover:bg-gray-50">
-                      <td className="py-2 pr-3 font-medium text-gray-900">{u.full_name}</td>
+                      <td className="py-2 pr-3 font-medium text-gray-900">
+                        <div className="flex items-center gap-1.5">
+                          {u.full_name}
+                          {u.is_verified && (
+                            <ShieldCheck
+                              className="w-3.5 h-3.5 text-lime-600 shrink-0"
+                              title="Verified user"
+                              aria-label="Verified"
+                            />
+                          )}
+                        </div>
+                      </td>
                       <td className="py-2 pr-3 text-gray-500 text-xs">{u.email}</td>
                       <td className="py-2 pr-3"><Badge status={u.role} /></td>
+                      <td className="py-2 pr-3">
+                        {u.is_verified ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-lime-700 font-medium bg-lime-50 px-2 py-0.5 rounded-full border border-lime-200">
+                            <ShieldCheck className="w-3 h-3" /> Verified
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-3 text-xs text-gray-600">
+                        {u.is_verified
+                          ? <span className="text-lime-700 font-medium">5+ completed</span>
+                          : <span>{u.completed_transaction_count ?? 0}/5 completed</span>
+                        }
+                      </td>
                       <td className="py-2 pr-3"><Badge status={u.is_active} /></td>
                       <td className="py-2 pr-3 text-xs text-gray-400">
                         {u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN") : "—"}
@@ -373,7 +464,7 @@ function UsersTab() {
             </div>
           )}
           <Paginator page={page} total={data.total} pageSize={20}
-            onChange={p => { setPage(p); load(p, roleFilter); }} />
+            onChange={p => { setPage(p); load(p, roleFilter, verifiedFilter, searchQuery); }} />
         </>
       )}
     </SectionCard>

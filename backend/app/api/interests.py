@@ -302,3 +302,156 @@ def cancel_interest(
 
     interest.status = InterestStatus.CANCELLED
     db.commit()
+
+
+
+# ── PUT: buyer or farmer confirms transaction completed (Correction 7) ────────
+
+from datetime import datetime, timezone as _tz  # noqa: E402  (placed here to avoid re-ordering)
+
+VERIFICATION_THRESHOLD = 5  # completed transactions needed for verified badge
+
+
+def _update_verification(profile, db: Session) -> None:
+    """Recalculate completed_transaction_count from DB and grant badge if threshold met."""
+    from app.models.farmer import Farmer as _Farmer
+    if isinstance(profile, _Farmer):
+        count = (
+            db.query(TransactionInterest)
+            .filter(
+                TransactionInterest.farmer_id == profile.id,
+                TransactionInterest.status == InterestStatus.COMPLETED,
+            )
+            .count()
+        )
+    else:
+        count = (
+            db.query(TransactionInterest)
+            .filter(
+                TransactionInterest.buyer_id == profile.id,
+                TransactionInterest.status == InterestStatus.COMPLETED,
+            )
+            .count()
+        )
+    profile.completed_transaction_count = count
+    profile.is_verified = count >= VERIFICATION_THRESHOLD
+
+
+@router.put(
+    "/{interest_id}/confirm-complete",
+    response_model=InterestResponse,
+    summary="Buyer or farmer confirms the transaction was completed. "
+            "When both parties confirm, the transaction is marked COMPLETED "
+            "and their completion count and verified status are updated.",
+)
+def confirm_complete(
+    interest_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Dual-confirmation completion flow (Correction 7):
+      1. Only the farmer or buyer directly involved can confirm.
+      2. Confirmation is allowed only when the interest is ACCEPTED.
+      3. A party can confirm at most once (idempotent after the first call).
+      4. When BOTH parties have confirmed, the status moves to COMPLETED
+         and each participant's count is recalculated from DB records.
+      5. COMPLETED transactions cannot be confirmed again.
+
+    Race-condition protection:
+      We use SELECT ... FOR UPDATE on the TransactionInterest row so that
+      concurrent confirmations from buyer and farmer are serialised at the
+      database level.  The eagerly-loaded response copy is fetched AFTER the
+      lock is released (post-commit) to avoid SQLAlchemy loader conflicts.
+    """
+    # -- Step 1: lock the row so concurrent confirmations are serialised ------
+    interest = (
+        db.query(TransactionInterest)
+        .filter_by(id=interest_id)
+        .with_for_update()          # row-level lock; no eager loads here
+        .first()
+    )
+    if not interest:
+        raise HTTPException(status_code=404, detail="Interest not found.")
+
+    # Determine caller's role in this transaction
+    farmer = db.query(Farmer).filter_by(user_id=current_user.id).first()
+    buyer  = db.query(Buyer).filter_by(user_id=current_user.id).first()
+
+    is_farmer_party = farmer and farmer.id == interest.farmer_id
+    is_buyer_party  = buyer  and buyer.id  == interest.buyer_id
+
+    if not is_farmer_party and not is_buyer_party:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not a party to this transaction.",
+        )
+
+    if interest.status == InterestStatus.COMPLETED:
+        raise HTTPException(
+            status_code=400,
+            detail="This transaction is already marked as completed.",
+        )
+
+    if interest.status != InterestStatus.ACCEPTED:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot confirm completion for a transaction with status '{interest.status}'. "
+                   "Only ACCEPTED transactions can be completed.",
+        )
+
+    # Record the confirmation (idempotent — second call for same party is a no-op)
+    if is_farmer_party:
+        if interest.farmer_confirmed:
+            # Already confirmed — release the row lock and return current state
+            db.rollback()
+            interest = (
+                db.query(TransactionInterest)
+                .options(*_INTEREST_OPTS)
+                .filter_by(id=interest_id)
+                .first()
+            )
+            return _build_response(interest, reveal_contact=True)
+        interest.farmer_confirmed = True
+
+    if is_buyer_party:
+        if interest.buyer_confirmed:
+            # Already confirmed — release the row lock and return current state
+            db.rollback()
+            interest = (
+                db.query(TransactionInterest)
+                .options(*_INTEREST_OPTS)
+                .filter_by(id=interest_id)
+                .first()
+            )
+            return _build_response(interest, reveal_contact=True)
+        interest.buyer_confirmed = True
+
+    # If both parties have now confirmed, finalise
+    if interest.buyer_confirmed and interest.farmer_confirmed:
+        interest.status = InterestStatus.COMPLETED
+        interest.completed_at = datetime.now(_tz.utc)
+
+        db.flush()  # write the status change before recalculating counts
+
+        # Also lock the profile rows while we update counts to prevent concurrent writes
+        farmer_profile = (
+            db.query(Farmer).filter_by(id=interest.farmer_id).with_for_update().first()
+        )
+        buyer_profile = (
+            db.query(Buyer).filter_by(id=interest.buyer_id).with_for_update().first()
+        )
+        if farmer_profile:
+            _update_verification(farmer_profile, db)
+        if buyer_profile:
+            _update_verification(buyer_profile, db)
+
+    db.commit()
+    # Reload with eager joins for the response (lock already released by commit)
+    interest = (
+        db.query(TransactionInterest)
+        .options(*_INTEREST_OPTS)
+        .filter_by(id=interest_id)
+        .first()
+    )
+    return _build_response(interest, reveal_contact=True)

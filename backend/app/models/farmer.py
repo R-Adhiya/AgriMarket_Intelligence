@@ -1,7 +1,9 @@
-from sqlalchemy import ForeignKey, Numeric, String
+from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base, TimestampMixin
+
+VERIFICATION_THRESHOLD = 5  # completed transactions required for a verified badge
 
 
 class Farmer(Base, TimestampMixin):
@@ -23,6 +25,10 @@ class Farmer(Base, TimestampMixin):
 
     # Farm size in acres
     farm_size: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
+
+    # Verification — Correction 7
+    completed_transaction_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="farmer_profile")  # noqa: F821
