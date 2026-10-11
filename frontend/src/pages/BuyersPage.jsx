@@ -7,7 +7,7 @@
  *   For FARMER role:
  *     Buyer Requirements | Received Requests
  */
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Users, ShoppingCart, Search, MessageSquare, Plus, CheckCircle, XCircle, Clock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
@@ -407,62 +407,266 @@ function SentRequests() {
 // ── Farmer: Buyer Requirements ─────────────────────────────────────────────────
 function FarmerBuyerRequirements() {
   const [requirements, setRequirements] = useState([]);
+  const [myInterests, setMyInterests] = useState([]); // interests already expressed
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [sending, setSending] = useState({});
   const [msg, setMsg] = useState({});
+  const [expanded, setExpanded] = useState({});
+  const [notes, setNotes] = useState({});
 
-  useEffect(() => {
-    api.get("/api/farmer/buyer-requirements").then(r => setRequirements(r.data)).catch(() => {});
+  // Filters
+  const [cropFilter, setCropFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const [reqRes, intRes] = await Promise.all([
+        api.get("/api/farmer/buyer-requirements"),
+        api.get("/api/farmer/interests"),
+      ]);
+      setRequirements(reqRes.data);
+      setMyInterests(intRes.data);
+    } catch (e) {
+      setError("Failed to load buyer requirements. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Build a lookup: requirement_id -> interest status
+  const interestMap = useMemo(() => {
+    const m = {};
+    for (const i of myInterests) {
+      if (i.requirement_id) m[i.requirement_id] = i.status;
+    }
+    return m;
+  }, [myInterests]);
 
   async function sendInterest(req) {
     setSending(s => ({ ...s, [req.id]: true }));
     try {
-      await api.post("/api/interests", {
-        buyer_id: req.buyer_id,
-        requirement_id: req.id,
-        notes: `I have ${req.crop_name} available that may match your requirement.`,
-      });
-      setMsg(m => ({ ...m, [req.id]: "Request sent!" }));
+      const note = notes[req.id] || `I have ${req.crop_name} available and am interested in your requirement.`;
+      await api.post(`/api/farmer/interests?requirement_id=${req.id}&notes=${encodeURIComponent(note)}`);
+      setMsg(m => ({ ...m, [req.id]: "Interest expressed — the buyer will be notified." }));
+      // Refresh interests to update duplicate state
+      const intRes = await api.get("/api/farmer/interests");
+      setMyInterests(intRes.data);
     } catch (e) {
       const detail = e.response?.data?.detail;
-      setMsg(m => ({ ...m, [req.id]: typeof detail === "string" ? detail : "Already sent or error." }));
-    } finally { setSending(s => ({ ...s, [req.id]: false })); }
+      if (e.response?.status === 409) {
+        setMsg(m => ({ ...m, [req.id]: "You have already expressed interest in this requirement." }));
+      } else {
+        setMsg(m => ({ ...m, [req.id]: typeof detail === "string" ? detail : "Failed to send interest." }));
+      }
+    } finally {
+      setSending(s => ({ ...s, [req.id]: false }));
+    }
+  }
+
+  // Matching: crop compatibility = already filtered by backend.
+  // We show a "Relevant match" badge when buyer location district matches farmer district.
+  // (We don't have farmer district here, but we surface the buyer's location clearly.)
+
+  // Apply filters
+  const filtered = requirements.filter(r => {
+    const cropMatch = !cropFilter || r.crop_name.toLowerCase().includes(cropFilter.toLowerCase());
+    const locMatch = !locationFilter ||
+      (r.district || "").toLowerCase().includes(locationFilter.toLowerCase()) ||
+      (r.location || "").toLowerCase().includes(locationFilter.toLowerCase()) ||
+      (r.state || "").toLowerCase().includes(locationFilter.toLowerCase());
+    return cropMatch && locMatch;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12 text-gray-400 text-sm gap-2">
+        <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+        Loading buyer requirements…
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-sm text-red-500 mb-3">{error}</p>
+        <button onClick={load} className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700">
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (
     <div>
-      <SectionTitle>Buyer Requirements</SectionTitle>
-      <p className="text-xs text-gray-400 mb-3">Buyers looking for crops you grow</p>
-      {requirements.length === 0 ? <EmptyState message="No matching buyer requirements found." /> : (
-        <div className="space-y-2">
-          {requirements.map(r => (
-            <div key={r.id} className="border border-gray-200 rounded-lg p-3 bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">{r.crop_name}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Required: {fmtQty(r.quantity)}
-                    {r.minimum_price && <> · Min price: {fmt(r.minimum_price)}/kg</>}
-                    {r.maximum_price && <> · Max: {fmt(r.maximum_price)}/kg</>}
-                    {r.location && <> · 📍 {r.location}</>}
-                  </p>
-                  {r.description && <p className="text-xs text-gray-400 italic mt-0.5">{r.description}</p>}
+      <div className="flex items-center justify-between mb-1">
+        <SectionTitle>Buyer Requirements</SectionTitle>
+        <button onClick={load} className="text-xs text-gray-400 hover:text-green-600">↻ Refresh</button>
+      </div>
+      <p className="text-xs text-gray-400 mb-4">Buyers looking for crops you grow — express interest to connect</p>
+
+      {/* Filters */}
+      <div className="flex gap-2 mb-4">
+        <div className="flex-1">
+          <input
+            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+            placeholder="Filter by crop…"
+            value={cropFilter}
+            onChange={e => setCropFilter(e.target.value)}
+          />
+        </div>
+        <div className="flex-1">
+          <input
+            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+            placeholder="Filter by location…"
+            value={locationFilter}
+            onChange={e => setLocationFilter(e.target.value)}
+          />
+        </div>
+        {(cropFilter || locationFilter) && (
+          <button
+            onClick={() => { setCropFilter(""); setLocationFilter(""); }}
+            className="px-2 py-1.5 text-xs text-gray-400 hover:text-gray-700"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {requirements.length === 0 ? (
+        <div className="text-center py-10">
+          <ShoppingCart className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+          <p className="text-sm text-gray-400">No matching buyer requirements found.</p>
+          <p className="text-xs text-gray-300 mt-1">Make sure you have crops listed as available in your profile.</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <EmptyState message="No requirements match your filters." />
+      ) : (
+        <div className="space-y-3">
+          <p className="text-xs text-gray-400">{filtered.length} requirement{filtered.length !== 1 ? "s" : ""} found</p>
+          {filtered.map(r => {
+            const alreadySent = interestMap[r.id];
+            const isExpanded = expanded[r.id];
+            const isSending = sending[r.id];
+            const feedback = msg[r.id];
+            const canExpress = !alreadySent || (alreadySent !== "PENDING" && alreadySent !== "INTERESTED" && alreadySent !== "ACCEPTED");
+
+            return (
+              <div key={r.id} className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+                {/* Header row */}
+                <div className="p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold text-gray-800">{r.crop_name}</span>
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-50 text-green-700 border border-green-200 rounded">
+                          Crop match
+                        </span>
+                        {alreadySent && <StatusBadge status={alreadySent} />}
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500 space-x-2">
+                        {r.quantity && <span>Wants: <strong>{fmtQty(r.quantity)}</strong></span>}
+                        {r.maximum_price && <span>Up to: <strong>{fmt(r.maximum_price)}/kg</strong></span>}
+                        {(r.location || r.district) && (
+                          <span>📍 {[r.location, r.district, r.state].filter(Boolean).join(", ")}</span>
+                        )}
+                        {r.buyer_name && <span className="text-gray-400">· {r.buyer_name}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => setExpanded(e => ({ ...e, [r.id]: !e[r.id] }))}
+                        className="px-2 py-1.5 text-xs text-gray-500 border border-gray-200 rounded hover:bg-gray-50"
+                      >
+                        {isExpanded ? "▲ Less" : "▼ Details"}
+                      </button>
+                      {alreadySent === "PENDING" || alreadySent === "INTERESTED" ? (
+                        <span className="px-3 py-1.5 text-xs bg-amber-50 text-amber-600 border border-amber-200 rounded whitespace-nowrap">
+                          Interest sent
+                        </span>
+                      ) : alreadySent === "ACCEPTED" ? (
+                        <span className="px-3 py-1.5 text-xs bg-green-50 text-green-700 border border-green-200 rounded whitespace-nowrap">
+                          Accepted ✓
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => sendInterest(r)}
+                          disabled={isSending}
+                          className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 disabled:opacity-50 whitespace-nowrap"
+                        >
+                          {isSending ? "Sending…" : "Express Interest"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Feedback message */}
+                  {feedback && (
+                    <p className={`mt-1.5 text-xs ${feedback.includes("Interest expressed") ? "text-green-600" : feedback.includes("already") ? "text-amber-600" : "text-red-500"}`}>
+                      {feedback}
+                    </p>
+                  )}
                 </div>
-                <button
-                  onClick={() => sendInterest(r)}
-                  disabled={sending[r.id]}
-                  className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 disabled:opacity-50 whitespace-nowrap"
-                >
-                  {sending[r.id] ? "Sending…" : "Send Interest"}
-                </button>
+
+                {/* Expanded detail */}
+                {isExpanded && (
+                  <div className="border-t border-gray-100 bg-gray-50 px-3 py-3 space-y-2">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      <span className="text-gray-400">Crop</span>
+                      <span className="text-gray-700 font-medium">{r.crop_name}</span>
+                      {r.quantity && (<><span className="text-gray-400">Required quantity</span><span className="text-gray-700">{fmtQty(r.quantity)}</span></>)}
+                      {r.minimum_price && (<><span className="text-gray-400">Min price</span><span className="text-gray-700">{fmt(r.minimum_price)}/kg</span></>)}
+                      {r.maximum_price && (<><span className="text-gray-400">Max price</span><span className="text-gray-700">{fmt(r.maximum_price)}/kg</span></>)}
+                      {r.location && (<><span className="text-gray-400">Location</span><span className="text-gray-700">{r.location}</span></>)}
+                      {r.district && (<><span className="text-gray-400">District</span><span className="text-gray-700">{r.district}</span></>)}
+                      {r.state && (<><span className="text-gray-400">State</span><span className="text-gray-700">{r.state}</span></>)}
+                      {r.buyer_name && (<><span className="text-gray-400">Buyer</span><span className="text-gray-700">{r.buyer_name}</span></>)}
+                      <span className="text-gray-400">Posted</span>
+                      <span className="text-gray-700">{new Date(r.created_at).toLocaleDateString("en-IN")}</span>
+                    </div>
+
+                    {/* Notes input when not yet sent */}
+                    {canExpress && !alreadySent && (
+                      <div className="mt-2">
+                        <label className="text-xs text-gray-500">Optional note to buyer</label>
+                        <textarea
+                          rows={2}
+                          className="w-full mt-0.5 px-2 py-1.5 text-xs border border-gray-300 rounded resize-none focus:outline-none focus:ring-1 focus:ring-green-500"
+                          placeholder={`I have ${r.crop_name} available and am interested in your requirement.`}
+                          value={notes[r.id] || ""}
+                          onChange={e => setNotes(n => ({ ...n, [r.id]: e.target.value }))}
+                        />
+                        <button
+                          onClick={() => sendInterest(r)}
+                          disabled={isSending}
+                          className="mt-1.5 px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 disabled:opacity-50"
+                        >
+                          {isSending ? "Sending…" : "Send with this note"}
+                        </button>
+                      </div>
+                    )}
+
+                    {alreadySent === "ACCEPTED" && (
+                      <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700 border border-green-200">
+                        ✓ Your interest was accepted. Check "Received Requests" for buyer contact details.
+                      </div>
+                    )}
+                    {alreadySent === "REJECTED" && (
+                      <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-600 border border-red-200">
+                        This interest was not accepted. You may express interest again if the requirement is still active.
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              {msg[r.id] && (
-                <p className={`mt-1.5 text-xs ${msg[r.id].includes("sent") ? "text-green-600" : "text-amber-600"}`}>
-                  {msg[r.id]}
-                </p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

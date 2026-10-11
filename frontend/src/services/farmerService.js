@@ -1,5 +1,5 @@
 /**
- * Farmer API service — profile and crop management.
+ * Farmer API service — profile, crop management, and buyer-requirement interests.
  */
 
 import api from "./api";
@@ -35,4 +35,25 @@ export async function updateFarmerCrop(id, data) {
 
 export async function deleteFarmerCrop(id) {
   await api.delete(`/api/farmer/crops/${id}`);
+}
+
+// ── Buyer requirements (farmer discovery) ─────────────────────────────────────
+
+export async function getFarmerBuyerRequirements() {
+  const r = await api.get("/api/farmer/buyer-requirements");
+  return r.data;
+}
+
+// ── Farmer interests (Correction 1) ───────────────────────────────────────────
+
+export async function farmerExpressInterest(requirementId, notes = "") {
+  const params = new URLSearchParams({ requirement_id: requirementId });
+  if (notes) params.append("notes", notes);
+  const r = await api.post(`/api/farmer/interests?${params.toString()}`);
+  return r.data;
+}
+
+export async function getFarmerInterests() {
+  const r = await api.get("/api/farmer/interests");
+  return r.data;
 }

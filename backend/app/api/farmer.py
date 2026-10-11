@@ -1,5 +1,5 @@
 """
-Farmer module API — Phase 4 + Phase 9 additions.
+Farmer module API — Phase 4 + Phase 9 additions + Correction 1.
 
 All endpoints require a valid JWT with role=FARMER.
 
@@ -13,6 +13,10 @@ Routes:
 
 Phase 9 additions:
   GET    /api/farmer/buyer-requirements   -- discover active buyer requirements
+
+Correction 1 additions:
+  POST   /api/farmer/interests            -- farmer expresses interest in a requirement
+  GET    /api/farmer/interests            -- farmer lists interests they've expressed
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -25,6 +29,7 @@ from app.models.farmer import Farmer
 from app.models.farmer_crop import FarmerCrop
 from app.models.buyer_requirement import BuyerRequirement, RequirementStatus
 from app.models.buyer import Buyer
+from app.models.transaction_interest import TransactionInterest, InterestStatus
 from app.models.user import User, UserRole
 from app.schemas.farmer import (
     FarmerCropCreate,
@@ -33,6 +38,7 @@ from app.schemas.farmer import (
     FarmerProfileResponse,
     FarmerProfileUpdate,
 )
+from app.schemas.interest import InterestResponse
 from app.schemas.buyer import BuyerRequirementPublicResponse
 
 router = APIRouter(
@@ -270,3 +276,154 @@ def list_buyer_requirements(
             )
         )
     return results
+
+
+# ── Correction 1: Farmer expresses interest in a buyer requirement ────────────
+
+def _build_interest_response(interest: TransactionInterest) -> InterestResponse:
+    """Build public interest response — contact withheld until ACCEPTED."""
+    farmer_user = interest.farmer.user if interest.farmer else None
+    buyer_user = interest.buyer.user if interest.buyer else None
+    accepted = interest.status == InterestStatus.ACCEPTED
+    return InterestResponse(
+        id=interest.id,
+        farmer_id=interest.farmer_id,
+        buyer_id=interest.buyer_id,
+        crop_id=interest.crop_id,
+        requirement_id=interest.requirement_id,
+        crop_name=interest.crop.name if interest.crop else None,
+        quantity=float(interest.quantity) if interest.quantity is not None else None,
+        notes=interest.notes,
+        status=interest.status,
+        farmer_name=farmer_user.full_name if farmer_user else None,
+        farmer_phone=farmer_user.phone if (farmer_user and accepted) else None,
+        farmer_location=interest.farmer.village if (interest.farmer and accepted) else None,
+        buyer_name=(
+            interest.buyer.business_name or buyer_user.full_name
+            if buyer_user else None
+        ),
+        buyer_phone=buyer_user.phone if (buyer_user and accepted) else None,
+        created_at=interest.created_at,
+        updated_at=interest.updated_at,
+    )
+
+
+@router.post(
+    "/interests",
+    response_model=InterestResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Farmer expresses interest in a buyer requirement",
+)
+def farmer_express_interest(
+    requirement_id: int,
+    notes: str = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Farmer initiates contact with the buyer who posted a requirement.
+    The requirement must be ACTIVE, and this farmer must have that crop available.
+    Prevents duplicate active interests for the same farmer+requirement pair.
+    """
+    farmer = db.query(Farmer).filter_by(user_id=current_user.id).first()
+    if not farmer:
+        raise HTTPException(status_code=404, detail="Farmer profile not found.")
+
+    # Load the requirement
+    req = (
+        db.query(BuyerRequirement)
+        .options(
+            joinedload(BuyerRequirement.crop),
+            joinedload(BuyerRequirement.buyer).joinedload(Buyer.user),
+        )
+        .filter_by(id=requirement_id)
+        .first()
+    )
+    if not req:
+        raise HTTPException(status_code=404, detail="Requirement not found.")
+    if req.status != RequirementStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="This requirement is no longer active.")
+
+    # Verify farmer has this crop available
+    has_crop = (
+        db.query(FarmerCrop)
+        .filter_by(farmer_id=farmer.id, crop_id=req.crop_id, is_available=True)
+        .first()
+    )
+    if not has_crop:
+        raise HTTPException(
+            status_code=400,
+            detail="You do not have this crop listed as available.",
+        )
+
+    # Duplicate prevention — same farmer + requirement with active status
+    existing = (
+        db.query(TransactionInterest)
+        .filter(
+            TransactionInterest.farmer_id == farmer.id,
+            TransactionInterest.requirement_id == requirement_id,
+            TransactionInterest.status.in_([InterestStatus.PENDING, InterestStatus.INTERESTED]),
+        )
+        .first()
+    )
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="You have already expressed interest in this requirement.",
+        )
+
+    interest = TransactionInterest(
+        farmer_id=farmer.id,
+        buyer_id=req.buyer_id,
+        crop_id=req.crop_id,
+        requirement_id=requirement_id,
+        notes=notes,
+        status=InterestStatus.PENDING,
+    )
+    db.add(interest)
+    db.commit()
+    db.refresh(interest)
+
+    # Reload with relationships
+    _opts = [
+        joinedload(TransactionInterest.farmer).joinedload(Farmer.user),
+        joinedload(TransactionInterest.buyer).joinedload(Buyer.user),
+        joinedload(TransactionInterest.crop),
+    ]
+    interest = (
+        db.query(TransactionInterest)
+        .options(*_opts)
+        .filter_by(id=interest.id)
+        .first()
+    )
+    return _build_interest_response(interest)
+
+
+@router.get(
+    "/interests",
+    response_model=list[InterestResponse],
+    summary="Farmer lists all interests they have expressed",
+)
+def farmer_list_interests(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns all interests this farmer has expressed (across all requirements).
+    """
+    farmer = db.query(Farmer).filter_by(user_id=current_user.id).first()
+    if not farmer:
+        return []
+    _opts = [
+        joinedload(TransactionInterest.farmer).joinedload(Farmer.user),
+        joinedload(TransactionInterest.buyer).joinedload(Buyer.user),
+        joinedload(TransactionInterest.crop),
+    ]
+    interests = (
+        db.query(TransactionInterest)
+        .options(*_opts)
+        .filter_by(farmer_id=farmer.id)
+        .order_by(TransactionInterest.created_at.desc())
+        .all()
+    )
+    return [_build_interest_response(i) for i in interests]
