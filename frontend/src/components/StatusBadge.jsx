@@ -1,22 +1,35 @@
 /**
- * StatusBadge — consistent status chip used across buyer/farmer marketplace.
+ * StatusBadge — consistent status chip using design system badge classes.
  * Covers: PENDING, ACCEPTED, REJECTED, CANCELLED, ACTIVE, FULFILLED, EXPIRED
  */
 export default function StatusBadge({ status }) {
   const map = {
-    PENDING:   "bg-amber-100 text-amber-700 border border-amber-200",
-    ACCEPTED:  "bg-green-100 text-green-700 border border-green-200",
-    REJECTED:  "bg-red-100 text-red-700 border border-red-200",
-    CANCELLED: "bg-gray-100 text-gray-500 border border-gray-200",
-    ACTIVE:    "bg-green-100 text-green-700 border border-green-200",
-    FULFILLED: "bg-blue-100 text-blue-700 border border-blue-200",
-    EXPIRED:   "bg-gray-100 text-gray-500 border border-gray-200",
+    PENDING:   "badge-pending",
+    ACCEPTED:  "badge-accepted",
+    REJECTED:  "badge-rejected",
+    CANCELLED: "badge-cancelled",
+    ACTIVE:    "badge-active",
+    FULFILLED: "badge-fulfilled",
+    EXPIRED:   "badge-expired",
   };
+
+  const cls = map[status] || "badge bg-neutral-100 text-neutral-500 border-neutral-300";
+
+  // Short dot indicator
+  const dots = {
+    PENDING:   "bg-amber-400",
+    ACCEPTED:  "bg-lime-500",
+    REJECTED:  "bg-red-400",
+    CANCELLED: "bg-neutral-400",
+    ACTIVE:    "bg-brand-500",
+    FULFILLED: "bg-sky-400",
+    EXPIRED:   "bg-neutral-300",
+  };
+  const dotCls = dots[status] || "bg-neutral-400";
+
   return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide
-                  ${map[status] || "bg-gray-100 text-gray-600 border border-gray-200"}`}
-    >
+    <span className={cls}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotCls}`} aria-hidden="true" />
       {status}
     </span>
   );

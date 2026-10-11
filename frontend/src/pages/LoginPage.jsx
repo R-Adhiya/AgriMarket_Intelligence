@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LogIn, Mail, Lock, AlertCircle } from "lucide-react";
+import { LogIn, Mail, Lock, AlertCircle, Leaf } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
@@ -34,7 +34,7 @@ export default function LoginPage() {
       if (err.response?.status === 401) {
         setError("Invalid email or password. Please try again.");
       } else if (msg) {
-        setError(msg);
+        setError(typeof msg === "string" ? msg : "Sign-in failed. Please try again.");
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -44,70 +44,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center">
-      {/* Header */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-        <Link to="/" className="inline-flex items-center gap-2">
-          <span className="text-2xl font-bold text-green-700">AgriMarket</span>
-          <span className="text-2xl font-semibold text-gray-700">Intelligence</span>
-        </Link>
-        <h2 className="mt-4 text-2xl font-bold text-gray-900">Sign in to your account</h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Don&apos;t have an account?{" "}
-          <Link to="/register" className="text-green-700 font-medium hover:underline">
-            Register here
+    <div className="min-h-screen flex">
+      {/* ── Left: form panel ── */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-12 bg-white">
+        <div className="mx-auto w-full max-w-sm">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5 mb-10">
+            <span className="flex items-center justify-center w-9 h-9 bg-brand-600 rounded-xl">
+              <Leaf className="w-5 h-5 text-white" aria-hidden="true" />
+            </span>
+            <div className="leading-tight">
+              <p className="text-sm font-bold text-neutral-900">AgriMarket</p>
+              <p className="text-xs text-neutral-500">Intelligence</p>
+            </div>
           </Link>
-        </p>
-      </div>
 
-      {/* Card */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white shadow-sm rounded-xl border border-gray-200 px-8 py-8">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-1">Welcome back</h1>
+          <p className="text-sm text-neutral-500 mb-8">
+            Don&apos;t have an account?{" "}
+            <Link to="/register" className="text-brand-600 font-semibold hover:underline">
+              Register here
+            </Link>
+          </p>
+
           {error && (
-            <div className="mb-4 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-              <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+            <div className="alert-error mb-5">
+              <AlertCircle size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
-              </label>
+              <label className="form-label" htmlFor="email">Email address</label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" aria-hidden="true" />
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   autoComplete="email"
                   value={form.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                             focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="form-input pl-9"
                   required
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <label className="form-label" htmlFor="password">Password</label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" aria-hidden="true" />
                 <input
+                  id="password"
                   type="password"
                   name="password"
                   autoComplete="current-password"
                   value={form.password}
                   onChange={handleChange}
                   placeholder="Your password"
-                  className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                             focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="form-input pl-9"
                   required
                 />
               </div>
@@ -116,17 +114,43 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800
-                         disabled:bg-green-400 text-white font-medium py-2.5 rounded-lg transition"
+              className="btn-primary w-full mt-2"
             >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="spinner-sm" aria-hidden="true" />
               ) : (
-                <LogIn size={16} />
+                <LogIn size={15} aria-hidden="true" />
               )}
               {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* ── Right: farm image panel (hidden on small screens) ── */}
+      <div className="hidden lg:flex lg:flex-1 relative overflow-hidden bg-brand-700">
+        <img
+          src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=900&h=1200&fit=crop&auto=format&q=70"
+          alt="Lush green farm fields"
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          loading="eager"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-700/80 via-brand-800/60 to-brand-900/80" />
+        <div className="relative z-10 flex flex-col justify-end p-12 text-white">
+          <blockquote className="text-2xl font-bold leading-snug mb-3">
+            "Directly from the Farm<br />to Your Hands"
+          </blockquote>
+          <p className="text-brand-200 text-sm max-w-xs leading-relaxed">
+            Compare market prices, get ML-powered recommendations and connect directly with buyers.
+          </p>
+          <div className="mt-8 flex gap-2">
+            {["Markets", "Prediction", "Buyers"].map(t => (
+              <span key={t} className="px-3 py-1 rounded-full bg-white/10 text-xs font-medium border border-white/20">
+                {t}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,15 +1,23 @@
 /**
- * LoadingSpinner — used for full-section loading states.
- * size: "sm" | "md" (default) | "lg"
+ * LoadingSpinner — full-page or inline centered loading indicator.
+ * Props:
+ *   size  — 'sm' | 'md' (default) | 'lg'
+ *   label — accessible label (default "Loading…")
  */
-export default function LoadingSpinner({ size = "md", message = "Loading…" }) {
-  const sizes = { sm: "w-4 h-4", md: "w-6 h-6", lg: "w-8 h-8" };
+export default function LoadingSpinner({ size = "md", label = "Loading…" }) {
+  const sizes = {
+    sm: "w-4 h-4 border-2",
+    md: "w-8 h-8 border-[3px]",
+    lg: "w-12 h-12 border-4",
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
-      <span
-        className={`${sizes[size]} border-2 border-gray-200 border-t-green-600 rounded-full animate-spin`}
+    <div className="flex flex-col items-center justify-center py-16 gap-3" role="status" aria-label={label}>
+      <div
+        className={`${sizes[size]} border-brand-200 border-t-brand-600 rounded-full animate-spin`}
+        aria-hidden="true"
       />
-      <span className="text-sm">{message}</span>
+      <p className="text-sm text-neutral-400">{label}</p>
     </div>
   );
 }

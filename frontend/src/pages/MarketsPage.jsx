@@ -100,10 +100,10 @@ export default function MarketsPage() {
     ? [...new Set(history.history.map((h) => h.market_name))]
     : [];
 
-  const COLORS = ["#16a34a", "#2563eb", "#d97706", "#dc2626", "#7c3aed"];
+  const COLORS = ["#047857", "#2563eb", "#d97706", "#dc2626", "#7c3aed"];
 
   return (
-    <div className="p-6 sm:p-8 max-w-5xl mx-auto space-y-6">
+    <div className="page-container">
       <PageHeader
         icon={TrendingUp}
         title="Market Intelligence"
@@ -138,7 +138,7 @@ export default function MarketsPage() {
                   setSelectedCrop(c || null);
                 }}
                 className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                           focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white"
               >
                 {crops.map((c) => (
                   <option key={c.id} value={c.id}>{c.name} ({c.unit})</option>
@@ -157,7 +157,7 @@ export default function MarketsPage() {
             min="1"
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
         </div>
       </div>
@@ -169,7 +169,7 @@ export default function MarketsPage() {
             <h2 className="font-semibold text-gray-800 flex items-center gap-2.5">
               <CropImage crop={selectedCrop.name} size={32} rounded="rounded-md" />
               <span className="flex items-center gap-1.5">
-                <BarChart3 size={16} className="text-green-700" />
+                <BarChart3 size={16} className="text-brand-600" />
                 Current Market Prices — {selectedCrop.name}
               </span>
             </h2>
@@ -209,7 +209,7 @@ export default function MarketsPage() {
                         <td className="py-2.5 text-gray-500">
                           {[p.district, p.state].filter(Boolean).join(", ")}
                         </td>
-                        <td className="py-2.5 text-right font-semibold text-green-700">₹{p.modal_price}</td>
+                        <td className="py-2.5 text-right font-semibold text-brand-600">₹{p.modal_price}</td>
                         <td className="py-2.5 text-right text-gray-400 text-xs">₹{p.min_price}–{p.max_price}</td>
                         <td className="py-2.5 text-right text-gray-500 text-xs">
                           {t ? `${t.distance_km} km` : "—"}
@@ -236,7 +236,7 @@ export default function MarketsPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
             <h2 className="font-semibold text-gray-800 flex items-center gap-2">
-              <TrendingUp size={16} className="text-green-700" />
+              <TrendingUp size={16} className="text-brand-600" />
               Historical Price Trend — {selectedCrop.name}
             </h2>
             <div className="flex gap-1">
@@ -246,7 +246,7 @@ export default function MarketsPage() {
                   onClick={() => setPeriod(opt.value)}
                   className={`px-3 py-1 text-xs rounded-lg border transition ${
                     period === opt.value
-                      ? "bg-green-700 text-white border-green-700"
+                      ? "bg-brand-600 text-white border-green-700"
                       : "border-gray-300 text-gray-500 hover:border-gray-400"
                   }`}
                 >
@@ -288,7 +288,7 @@ export default function MarketsPage() {
       {transport?.markets?.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="font-semibold text-gray-800 flex items-center gap-2 mb-3">
-            <Truck size={16} className="text-green-700" />
+            <Truck size={16} className="text-brand-600" />
             Transport Distance Summary
             <span className="text-xs font-normal text-gray-400 ml-1">(sorted by distance)</span>
           </h2>

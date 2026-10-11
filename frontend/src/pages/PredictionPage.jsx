@@ -86,7 +86,7 @@ export default function PredictionPage() {
   })();
 
   return (
-    <div className="p-6 sm:p-8 max-w-4xl mx-auto space-y-6">
+    <div className="page-container">
       <PageHeader
         icon={Brain}
         title="Price Prediction"
@@ -96,7 +96,7 @@ export default function PredictionPage() {
       {/* Observed vs Estimated legend */}
       <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
         <span className="flex items-center gap-1.5">
-          <span className="w-6 h-0.5 bg-green-600 rounded inline-block" />
+          <span className="w-6 h-0.5 bg-brand-600 rounded inline-block" />
           Observed (actual recorded price)
         </span>
         <span className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ export default function PredictionPage() {
                   onClick={() => setHorizon(h.value)}
                   className={`px-3 py-2 text-xs rounded-lg border transition ${
                     horizon === h.value
-                      ? "bg-green-700 text-white border-green-700"
+                      ? "bg-brand-600 text-white border-green-700"
                       : "border-gray-300 text-gray-500 hover:border-gray-400"
                   }`}
                 >
@@ -158,7 +158,7 @@ export default function PredictionPage() {
           <button
             onClick={handlePredict}
             disabled={loading || !crop || !market}
-            className="flex items-center gap-2 bg-green-700 hover:bg-green-800
+            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700
                        disabled:bg-green-400 text-white text-sm font-medium
                        px-4 py-2 rounded-lg transition"
           >
@@ -208,7 +208,7 @@ export default function PredictionPage() {
                   strokeDasharray="4 2"
                   label={{ value: "Today", fontSize: 10, fill: "#d97706" }}
                 />
-                <Line type="monotone" dataKey="observed"  name="Observed"  stroke="#16a34a" strokeWidth={2} dot={{ r: 4 }} connectNulls />
+                <Line type="monotone" dataKey="observed"  name="Observed"  stroke="#047857" strokeWidth={2} dot={{ r: 4 }} connectNulls />
                 <Line type="monotone" dataKey="predicted" name="Estimated" stroke="#2563eb" strokeWidth={2} strokeDasharray="5 3" dot={{ r: 4 }} connectNulls />
               </LineChart>
             </ResponsiveContainer>
@@ -231,7 +231,7 @@ export default function PredictionPage() {
                 {result.predictions.map((p) => (
                   <tr key={p.date} className="border-b border-gray-50 last:border-0">
                     <td className="py-2 text-gray-700">{p.date}</td>
-                    <td className="py-2 text-right font-medium text-green-700">₹{p.predicted_price}</td>
+                    <td className="py-2 text-right font-medium text-brand-600">₹{p.predicted_price}</td>
                   </tr>
                 ))}
               </tbody>
@@ -252,7 +252,7 @@ function Select({ value, onChange, options }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-green-500 bg-white min-w-[160px]"
+                   focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white min-w-[160px]"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
@@ -265,9 +265,9 @@ function Select({ value, onChange, options }) {
 
 function StatCard({ label, value, sub, highlight }) {
   return (
-    <div className={`rounded-xl border p-4 ${highlight ? "border-green-200 bg-green-50" : "border-gray-200 bg-white"}`}>
+    <div className={`rounded-xl border p-4 ${highlight ? "border-brand-200 bg-brand-50" : "border-gray-200 bg-white"}`}>
       <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className={`text-xl font-bold truncate ${highlight ? "text-green-700" : "text-gray-800"}`}>{value}</p>
+      <p className={`text-xl font-bold truncate ${highlight ? "text-brand-600" : "text-gray-800"}`}>{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5 truncate">{sub}</p>}
     </div>
   );

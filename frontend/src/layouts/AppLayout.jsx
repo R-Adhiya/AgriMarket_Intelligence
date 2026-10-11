@@ -45,14 +45,10 @@ function NavItem({ to, icon: Icon, label, onClick }) {
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          isActive
-            ? "bg-green-50 text-green-700 font-semibold"
-            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-        }`
+        isActive ? "nav-item-active" : "nav-item-inactive"
       }
     >
-      <Icon className="w-4 h-4 shrink-0" />
+      <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
       {label}
     </NavLink>
   );
@@ -75,82 +71,99 @@ export default function AppLayout() {
   const navItems = getNavItems(user?.role);
   const initials = user?.full_name?.[0]?.toUpperCase() || "U";
 
-  return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* ── Sidebar (desktop) ── */}
-      <aside className="hidden md:flex w-60 shrink-0 bg-white border-r border-gray-200 flex-col">
-        {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-200">
-          <span className="flex items-center justify-center w-8 h-8 bg-green-700 rounded-lg">
-            <Leaf className="w-4 h-4 text-white" />
-          </span>
-          <span className="text-sm font-bold text-gray-900 leading-tight">
-            AgriMarket<br />
-            <span className="font-normal text-gray-500">Intelligence</span>
-          </span>
+  // Sidebar content shared between desktop & mobile
+  const SidebarContent = ({ onItemClick } = {}) => (
+    <>
+      {/* Logo */}
+      <div className="flex items-center gap-2.5 px-5 py-4 border-b border-brand-600">
+        <span className="flex items-center justify-center w-8 h-8 bg-lime-400 rounded-xl shrink-0">
+          <Leaf className="w-4 h-4 text-brand-700" aria-hidden="true" />
+        </span>
+        <div className="leading-tight">
+          <p className="text-sm font-bold text-white">AgriMarket</p>
+          <p className="text-xs text-brand-300">Intelligence</p>
         </div>
+      </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto" aria-label="Main navigation">
-          {navItems.map(({ to, icon, label }) => (
-            <NavItem key={to} to={to} icon={icon} label={label} />
-          ))}
-        </nav>
+      {/* Role chip */}
+      <div className="px-5 py-2">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                         bg-lime-400/20 text-lime-300 border border-lime-400/30">
+          {roleLabel}
+        </span>
+      </div>
 
-        {/* User footer */}
-        {user && (
-          <div className="px-4 py-3 border-t border-gray-200">
-            <div className="flex items-center gap-2 mb-2">
-              <div
-                className="w-7 h-7 rounded-full bg-green-700 flex items-center justify-center
-                           text-white text-xs font-bold shrink-0"
-                aria-hidden="true"
-              >
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-gray-800 truncate">{user.full_name}</p>
-                <p className="text-xs text-gray-400">{roleLabel}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              aria-label="Sign out"
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500
-                         hover:bg-red-50 hover:text-red-600 transition-colors"
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto" aria-label="Main navigation">
+        {navItems.map(({ to, icon, label }) => (
+          <NavItem key={to} to={to} icon={icon} label={label} onClick={onItemClick} />
+        ))}
+      </nav>
+
+      {/* User footer */}
+      {user && (
+        <div className="px-4 py-3 border-t border-brand-600/60">
+          <div className="flex items-center gap-2 mb-2.5">
+            <div
+              className="w-8 h-8 rounded-full bg-lime-400 flex items-center justify-center
+                         text-brand-700 text-xs font-bold shrink-0"
+              aria-hidden="true"
             >
-              <LogOut size={13} aria-hidden="true" />
-              Sign out
-            </button>
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-white truncate">{user.full_name}</p>
+              <p className="text-xs text-brand-300/80">{user.email}</p>
+            </div>
           </div>
-        )}
-
-        <div className="px-4 py-2 border-t border-gray-100">
-          <BackendStatus />
+          <button
+            onClick={handleLogout}
+            aria-label="Sign out"
+            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs
+                       text-brand-300 hover:bg-red-500/10 hover:text-red-300
+                       transition-colors duration-150"
+          >
+            <LogOut size={13} aria-hidden="true" />
+            Sign out
+          </button>
         </div>
+      )}
+
+      <div className="px-4 py-2 border-t border-brand-600/40">
+        <BackendStatus />
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex h-screen bg-neutral-100 overflow-hidden">
+      {/* ── Desktop sidebar ── */}
+      <aside className="hidden md:flex w-60 shrink-0 bg-brand-700 flex-col">
+        <SidebarContent />
       </aside>
 
       {/* ── Mobile top bar ── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 flex items-center justify-between h-14 px-4">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-brand-700 flex items-center justify-between h-14 px-4">
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-7 h-7 bg-green-700 rounded-lg">
-            <Leaf className="w-3.5 h-3.5 text-white" />
+          <span className="flex items-center justify-center w-7 h-7 bg-lime-400 rounded-lg">
+            <Leaf className="w-3.5 h-3.5 text-brand-700" aria-hidden="true" />
           </span>
-          <span className="text-sm font-bold text-gray-900">AgriMarket</span>
+          <span className="text-sm font-bold text-white">AgriMarket</span>
         </div>
         <button
           onClick={() => setMobileOpen((o) => !o)}
           aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          aria-expanded={mobileOpen}
+          className="p-2 rounded-lg text-brand-200 hover:bg-brand-600 transition-colors"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* ── Mobile drawer overlay ── */}
+      {/* ── Mobile overlay ── */}
       {mobileOpen && (
         <div
-          className="md:hidden fixed inset-0 z-30 bg-black/30"
+          className="md:hidden fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
           aria-hidden="true"
         />
@@ -158,36 +171,11 @@ export default function AppLayout() {
 
       {/* ── Mobile drawer ── */}
       <aside
-        className={`md:hidden fixed top-14 left-0 bottom-0 z-40 w-64 bg-white border-r border-gray-200
-                   flex flex-col transition-transform duration-200 ease-in-out
+        className={`md:hidden fixed top-14 left-0 bottom-0 z-40 w-64 bg-brand-700 flex flex-col
+                   transition-transform duration-200 ease-in-out
                    ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto" aria-label="Mobile navigation">
-          {navItems.map(({ to, icon, label }) => (
-            <NavItem key={to} to={to} icon={icon} label={label} onClick={() => setMobileOpen(false)} />
-          ))}
-        </nav>
-        {user && (
-          <div className="px-4 py-3 border-t border-gray-200">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-gray-800 truncate">{user.full_name}</p>
-                <p className="text-xs text-gray-400">{roleLabel}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500
-                         hover:bg-red-50 hover:text-red-600 transition-colors"
-            >
-              <LogOut size={13} />
-              Sign out
-            </button>
-          </div>
-        )}
+        <SidebarContent onItemClick={() => setMobileOpen(false)} />
       </aside>
 
       {/* ── Main content ── */}

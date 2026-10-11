@@ -20,7 +20,7 @@ import CropImage from "../components/CropImage";
 
 function StatCard({ icon: Icon, label, value, color = "green", sub }) {
   const colors = {
-    green:  "bg-green-50 text-green-700",
+    green:  "bg-brand-50 text-brand-600",
     blue:   "bg-blue-50 text-blue-700",
     amber:  "bg-amber-50 text-amber-700",
     purple: "bg-purple-50 text-purple-700",
@@ -57,7 +57,7 @@ function EmptyState({ message, link, linkLabel }) {
     <div className="flex flex-col items-center justify-center py-8 text-center gap-2">
       <p className="text-sm text-gray-400">{message}</p>
       {link && (
-        <Link to={link} className="text-xs font-medium text-green-700 hover:underline flex items-center gap-1">
+        <Link to={link} className="text-xs font-medium text-brand-600 hover:underline flex items-center gap-1">
           {linkLabel} <ArrowRight className="w-3 h-3" />
         </Link>
       )}
@@ -130,7 +130,7 @@ function FarmerDashboard({ user }) {
   };
 
   return (
-    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-6">
+    <div className="page-container">
       {/* Welcome */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -169,7 +169,7 @@ function FarmerDashboard({ user }) {
         <SectionCard
           title="Latest Recommendation"
           action={
-            <Link to={ROUTES.RECOMMENDATIONS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+            <Link to={ROUTES.RECOMMENDATIONS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
               View all <ArrowRight className="w-3 h-3" />
             </Link>
           }
@@ -187,9 +187,9 @@ function FarmerDashboard({ user }) {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-green-50 rounded-lg p-2">
+                <div className="bg-brand-50 rounded-lg p-2">
                   <p className="text-xs text-gray-500">Net Revenue</p>
-                  <p className="text-sm font-bold text-green-700">{fmt(latest_recommendation.net_revenue)}</p>
+                  <p className="text-sm font-bold text-brand-600">{fmt(latest_recommendation.net_revenue)}</p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-2">
                   <p className="text-xs text-gray-500">Price</p>
@@ -217,7 +217,7 @@ function FarmerDashboard({ user }) {
         <SectionCard
           title="Market Price Snapshot"
           action={
-            <Link to={ROUTES.MARKETS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+            <Link to={ROUTES.MARKETS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
               View markets <ArrowRight className="w-3 h-3" />
             </Link>
           }
@@ -232,7 +232,7 @@ function FarmerDashboard({ user }) {
                   formatter={(v) => [`₹${v}/kg`, "Modal Price"]}
                   labelFormatter={(l) => `Market: ${l}`}
                 />
-                <Bar dataKey="price" fill="#16a34a" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="price" fill="#047857" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -245,7 +245,7 @@ function FarmerDashboard({ user }) {
       <SectionCard
         title={`Buyer Opportunities (${stats.buyer_opportunities})`}
         action={
-          <Link to={ROUTES.BUYERS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+          <Link to={ROUTES.BUYERS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         }
@@ -271,7 +271,7 @@ function FarmerDashboard({ user }) {
                       </div>
                     </td>
                     <td className="py-2 pr-3 text-right text-gray-600">{opp.quantity_kg.toLocaleString()}</td>
-                    <td className="py-2 pr-3 text-right text-green-700 font-medium">
+                    <td className="py-2 pr-3 text-right text-brand-600 font-medium">
                       {opp.desired_price ? `₹${opp.desired_price}/kg` : "—"}
                     </td>
                     <td className="py-2 text-gray-500 text-xs">{opp.location || "—"}</td>
@@ -343,10 +343,10 @@ function BuyerDashboard({ user }) {
     { name: "Rejected",  value: stats.rejected_requests },
   ].filter(d => d.value > 0);
 
-  const statusColors = ["#16a34a", "#d97706", "#2563eb", "#dc2626"];
+  const statusColors = ["#047857", "#d97706", "#2563eb", "#dc2626"];
 
   return (
-    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-6">
+    <div className="page-container">
       {/* Welcome */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
@@ -372,7 +372,7 @@ function BuyerDashboard({ user }) {
         <SectionCard
           title="Active Requirements"
           action={
-            <Link to={ROUTES.BUYERS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+            <Link to={ROUTES.BUYERS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
               Manage <ArrowRight className="w-3 h-3" />
             </Link>
           }
@@ -389,7 +389,7 @@ function BuyerDashboard({ user }) {
                       {req.location ? ` · ${req.location}` : ""}
                     </p>
                   </div>
-                  <span className="shrink-0 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                  <span className="shrink-0 text-xs bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full">
                     {req.status}
                   </span>
                 </li>
@@ -426,7 +426,7 @@ function BuyerDashboard({ user }) {
       <SectionCard
         title={`Matching Farmers (${matching_farmers.length})`}
         action={
-          <Link to={ROUTES.BUYERS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+          <Link to={ROUTES.BUYERS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
             Find farmers <ArrowRight className="w-3 h-3" />
           </Link>
         }
@@ -447,7 +447,7 @@ function BuyerDashboard({ user }) {
                   <tr key={f.farmer_crop_id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="py-2 pr-3 font-medium text-gray-900">{f.farmer_name}</td>
                     <td className="py-2 pr-3 text-gray-600">{f.crop_name}</td>
-                    <td className="py-2 pr-3 text-right text-green-700">{f.available_quantity.toLocaleString()}</td>
+                    <td className="py-2 pr-3 text-right text-brand-600">{f.available_quantity.toLocaleString()}</td>
                     <td className="py-2 text-gray-500 text-xs">{f.location || "—"}</td>
                   </tr>
                 ))}
@@ -463,7 +463,7 @@ function BuyerDashboard({ user }) {
       <SectionCard
         title="Request Activity"
         action={
-          <Link to={ROUTES.BUYERS} className="text-xs text-green-700 hover:underline flex items-center gap-0.5">
+          <Link to={ROUTES.BUYERS} className="text-xs text-brand-600 hover:underline flex items-center gap-0.5">
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         }
@@ -489,7 +489,7 @@ function BuyerDashboard({ user }) {
                     </p>
                   </div>
                   <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium
-                    ${isAccepted ? "bg-green-50 text-green-700" :
+                    ${isAccepted ? "bg-brand-50 text-brand-600" :
                       isRejected ? "bg-red-50 text-red-600" :
                                    "bg-amber-50 text-amber-700"}`}>
                     {item.status}

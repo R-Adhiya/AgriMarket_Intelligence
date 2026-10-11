@@ -113,7 +113,7 @@ export default function ProfilePage() {
       {/* ── Account info (read-only) ── */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm mb-4 pb-3 border-b border-gray-100">
-          <User className="w-4 h-4 text-green-700" aria-hidden="true" />
+          <User className="w-4 h-4 text-brand-600" aria-hidden="true" />
           Account Information
         </div>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
@@ -127,7 +127,7 @@ export default function ProfilePage() {
       {/* ── Location & farm ── */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm mb-4 pb-3 border-b border-gray-100">
-          <MapPin className="w-4 h-4 text-green-700" aria-hidden="true" />
+          <MapPin className="w-4 h-4 text-brand-600" aria-hidden="true" />
           Location &amp; Farm Details
         </div>
         <form onSubmit={saveProfile} className="space-y-4">
@@ -163,7 +163,7 @@ export default function ProfilePage() {
 
           {profileMsg && (
             <div className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2.5
-              ${profileMsg.type === "ok" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+              ${profileMsg.type === "ok" ? "bg-brand-50 text-brand-600 border border-brand-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
               {profileMsg.type === "ok"
                 ? <CheckCircle className="w-4 h-4 shrink-0" />
                 : <AlertCircle className="w-4 h-4 shrink-0" />}
@@ -174,7 +174,7 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={profileSaving}
-            className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800
+            className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700
                        disabled:bg-green-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
           >
             <Save className="w-3.5 h-3.5" aria-hidden="true" />
@@ -186,7 +186,7 @@ export default function ProfilePage() {
       {/* ── Crops ── */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm mb-4 pb-3 border-b border-gray-100">
-          <Leaf className="w-4 h-4 text-green-700" aria-hidden="true" />
+          <Leaf className="w-4 h-4 text-brand-600" aria-hidden="true" />
           My Crop Listings
         </div>
 
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                 value={newCrop.crop_id}
                 onChange={(e) => setNewCrop((p) => ({ ...p, crop_id: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                           focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white"
               >
                 <option value="">Select crop…</option>
                 {allCrops.map((c) => (
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                 value={newCrop.crop_id}
                 onChange={(e) => setNewCrop((p) => ({ ...p, crop_id: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-green-500"
+                           focus:outline-none focus:ring-2 focus:ring-brand-600"
               />
             )}
           </div>
@@ -235,7 +235,7 @@ export default function ProfilePage() {
               value={newCrop.quantity}
               onChange={(e) => setNewCrop((p) => ({ ...p, quantity: e.target.value }))}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-green-500"
+                         focus:outline-none focus:ring-2 focus:ring-brand-600"
             />
           </div>
           <div className="w-28">
@@ -247,7 +247,7 @@ export default function ProfilePage() {
               value={newCrop.unit}
               onChange={(e) => setNewCrop((p) => ({ ...p, unit: e.target.value }))}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                         focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white"
             >
               {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
             </select>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={cropAdding}
-            className="inline-flex items-center gap-1.5 bg-green-700 hover:bg-green-800
+            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700
                        disabled:bg-green-400 text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors"
           >
             <Plus className="w-3.5 h-3.5" aria-hidden="true" />
@@ -282,8 +282,8 @@ export default function ProfilePage() {
             {crops.map((c) => (
               <div key={c.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center shrink-0">
-                    <Leaf className="w-4 h-4 text-green-600" aria-hidden="true" />
+                  <span className="w-8 h-8 bg-brand-50 rounded-lg flex items-center justify-center shrink-0">
+                    <Leaf className="w-4 h-4 text-brand-600" aria-hidden="true" />
                   </span>
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{c.crop?.name || `Crop #${c.crop_id}`}</p>
@@ -332,7 +332,7 @@ function FormField({ label, value, onChange, placeholder, type = "text", require
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                   focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent"
       />
       {hint && <p className="text-xs text-gray-400 mt-0.5">{hint}</p>}
     </div>

@@ -339,7 +339,7 @@ function FindFarmers() {
                 </button>
               </div>
               {msg[m.farmer_id] && (
-                <p className={`mt-1.5 text-xs ${msg[m.farmer_id].includes("sent") ? "text-green-600" : "text-amber-600"}`}>
+                <p className={`mt-1.5 text-xs ${msg[m.farmer_id].includes("sent") ? "text-brand-600" : "text-amber-600"}`}>
                   {msg[m.farmer_id]}
                 </p>
               )}
@@ -389,7 +389,7 @@ function SentRequests() {
                 </div>
               </div>
               {i.status === "ACCEPTED" && (
-                <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+                <div className="mt-2 p-2 bg-brand-50 rounded text-xs text-brand-600">
                   <CheckCircle size={12} className="inline mr-1" />
                   Accepted — contact information is now available.
                   {i.farmer_phone && <> Phone: <strong>{i.farmer_phone}</strong></>}
@@ -495,7 +495,7 @@ function FarmerBuyerRequirements() {
     return (
       <div className="text-center py-8">
         <p className="text-sm text-red-500 mb-3">{error}</p>
-        <button onClick={load} className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700">
+        <button onClick={load} className="px-3 py-1.5 text-xs bg-brand-600 text-white rounded hover:bg-brand-600">
           Retry
         </button>
       </div>
@@ -506,7 +506,7 @@ function FarmerBuyerRequirements() {
     <div>
       <div className="flex items-center justify-between mb-1">
         <SectionTitle>Buyer Requirements</SectionTitle>
-        <button onClick={load} className="text-xs text-gray-400 hover:text-green-600">↻ Refresh</button>
+        <button onClick={load} className="text-xs text-gray-400 hover:text-brand-600">↻ Refresh</button>
       </div>
       <p className="text-xs text-gray-400 mb-4">Buyers looking for crops you grow — express interest to connect</p>
 
@@ -514,7 +514,7 @@ function FarmerBuyerRequirements() {
       <div className="flex gap-2 mb-4">
         <div className="flex-1">
           <input
-            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-brand-600"
             placeholder="Filter by crop…"
             value={cropFilter}
             onChange={e => setCropFilter(e.target.value)}
@@ -522,7 +522,7 @@ function FarmerBuyerRequirements() {
         </div>
         <div className="flex-1">
           <input
-            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+            className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-brand-600"
             placeholder="Filter by location…"
             value={locationFilter}
             onChange={e => setLocationFilter(e.target.value)}
@@ -564,7 +564,7 @@ function FarmerBuyerRequirements() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-semibold text-gray-800">{r.crop_name}</span>
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-50 text-green-700 border border-green-200 rounded">
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-brand-50 text-brand-600 border border-brand-200 rounded">
                           Crop match
                         </span>
                         {alreadySent && <StatusBadge status={alreadySent} />}
@@ -591,14 +591,14 @@ function FarmerBuyerRequirements() {
                           Interest sent
                         </span>
                       ) : alreadySent === "ACCEPTED" ? (
-                        <span className="px-3 py-1.5 text-xs bg-green-50 text-green-700 border border-green-200 rounded whitespace-nowrap">
+                        <span className="px-3 py-1.5 text-xs bg-brand-50 text-brand-600 border border-brand-200 rounded whitespace-nowrap">
                           Accepted ✓
                         </span>
                       ) : (
                         <button
                           onClick={() => sendInterest(r)}
                           disabled={isSending}
-                          className="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 disabled:opacity-50 whitespace-nowrap"
+                          className="px-3 py-1.5 bg-brand-600 text-white text-xs rounded hover:bg-brand-600 disabled:opacity-50 whitespace-nowrap"
                         >
                           {isSending ? "Sending…" : "Express Interest"}
                         </button>
@@ -608,7 +608,7 @@ function FarmerBuyerRequirements() {
 
                   {/* Feedback message */}
                   {feedback && (
-                    <p className={`mt-1.5 text-xs ${feedback.includes("Interest expressed") ? "text-green-600" : feedback.includes("already") ? "text-amber-600" : "text-red-500"}`}>
+                    <p className={`mt-1.5 text-xs ${feedback.includes("Interest expressed") ? "text-brand-600" : feedback.includes("already") ? "text-amber-600" : "text-red-500"}`}>
                       {feedback}
                     </p>
                   )}
@@ -637,7 +637,7 @@ function FarmerBuyerRequirements() {
                         <label className="text-xs text-gray-500">Optional note to buyer</label>
                         <textarea
                           rows={2}
-                          className="w-full mt-0.5 px-2 py-1.5 text-xs border border-gray-300 rounded resize-none focus:outline-none focus:ring-1 focus:ring-green-500"
+                          className="w-full mt-0.5 px-2 py-1.5 text-xs border border-gray-300 rounded resize-none focus:outline-none focus:ring-1 focus:ring-brand-600"
                           placeholder={`I have ${r.crop_name} available and am interested in your requirement.`}
                           value={notes[r.id] || ""}
                           onChange={e => setNotes(n => ({ ...n, [r.id]: e.target.value }))}
@@ -645,7 +645,7 @@ function FarmerBuyerRequirements() {
                         <button
                           onClick={() => sendInterest(r)}
                           disabled={isSending}
-                          className="mt-1.5 px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 disabled:opacity-50"
+                          className="mt-1.5 px-3 py-1.5 bg-brand-600 text-white text-xs rounded hover:bg-brand-600 disabled:opacity-50"
                         >
                           {isSending ? "Sending…" : "Send with this note"}
                         </button>
@@ -653,7 +653,7 @@ function FarmerBuyerRequirements() {
                     )}
 
                     {alreadySent === "ACCEPTED" && (
-                      <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700 border border-green-200">
+                      <div className="mt-2 p-2 bg-brand-50 rounded text-xs text-brand-600 border border-brand-200">
                         ✓ Your interest was accepted. Check "Received Requests" for buyer contact details.
                       </div>
                     )}
@@ -707,7 +707,7 @@ function ReceivedRequests() {
               {i.status === "PENDING" && (
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => respond(i.id, "accept")}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700">
+                    className="flex items-center gap-1 px-3 py-1.5 bg-brand-600 text-white text-xs rounded hover:bg-brand-600">
                     <CheckCircle size={12} /> Accept
                   </button>
                   <button onClick={() => respond(i.id, "reject")}
@@ -717,7 +717,7 @@ function ReceivedRequests() {
                 </div>
               )}
               {i.status === "ACCEPTED" && (
-                <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+                <div className="mt-2 p-2 bg-brand-50 rounded text-xs text-brand-600">
                   <CheckCircle size={12} className="inline mr-1" />
                   Accepted — contact information shared.
                   {i.buyer_phone && <> Buyer phone: <strong>{i.buyer_phone}</strong></>}
@@ -768,7 +768,7 @@ export default function BuyersPage() {
   const tabs = role === "BUYER" ? buyerTabs : farmerTabs;
 
   return (
-    <div className="p-6 sm:p-8 max-w-3xl mx-auto">
+    <div className="page-container">
       <PageHeader
         icon={Users}
         title={role === "BUYER" ? "Buyer Marketplace" : "Buyer-Farmer Connect"}

@@ -50,7 +50,7 @@ export default function RecommendationsPage() {
   const rec = result?.recommended_market;
 
   return (
-    <div className="p-6 sm:p-8 max-w-5xl mx-auto space-y-6">
+    <div className="page-container">
       <PageHeader
         icon={Lightbulb}
         title="Market Recommendation"
@@ -70,7 +70,7 @@ export default function RecommendationsPage() {
             <label className="block text-xs text-gray-500 mb-1">Crop</label>
             <div className="relative">
               <select value={crop?.id ?? ""} onChange={(e) => setCrop(crops.find(c => c.id === parseInt(e.target.value)))}
-                className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white min-w-[160px]">
+                className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white min-w-[160px]">
                 {crops.map(c => <option key={c.id} value={c.id}>{c.name} ({c.unit})</option>)}
               </select>
               <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -82,7 +82,7 @@ export default function RecommendationsPage() {
             <label className="block text-xs text-gray-500 mb-1">Quantity (kg)</label>
             <input type="number" min="1" value={quantityKg}
               onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+              className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-600" />
           </div>
 
           {/* Price basis */}
@@ -90,7 +90,7 @@ export default function RecommendationsPage() {
             <label className="block text-xs text-gray-500 mb-1">Price basis</label>
             <div className="relative">
               <select value={priceBasis} onChange={(e) => setBasis(e.target.value)}
-                className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+                className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 bg-white">
                 {BASIS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
               <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -98,7 +98,7 @@ export default function RecommendationsPage() {
           </div>
 
           <button onClick={handleRecommend} disabled={loading || !crop}
-            className="flex items-center gap-2 bg-green-700 hover:bg-green-800 disabled:bg-green-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:bg-green-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
             {loading ? <RefreshCw size={14} className="animate-spin" /> : <Lightbulb size={14} />}
             {loading ? "Analysing…" : "Get Recommendation"}
           </button>
@@ -116,13 +116,13 @@ export default function RecommendationsPage() {
         <>
           {/* Recommended market hero */}
           {rec ? (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+            <div className="bg-brand-50 border border-brand-200 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-1">
                 <CropImage crop={rec.crop_name || crop?.name} size={40} rounded="rounded-lg" />
                 <div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle size={18} className="text-green-600" />
-                    <span className="text-sm font-semibold text-green-700 uppercase tracking-wide">Recommended Market</span>
+                    <CheckCircle size={18} className="text-brand-600" />
+                    <span className="text-sm font-semibold text-brand-600 uppercase tracking-wide">Recommended Market</span>
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-0">{rec.market_name}</h2>
                 </div>
@@ -137,7 +137,7 @@ export default function RecommendationsPage() {
                 <Metric icon={<MapPin size={14} />}     label="Distance"        value={`${rec.distance_km} km`} />
               </div>
               <div className="bg-white rounded-lg border border-green-100 px-4 py-3 text-sm text-gray-700">
-                <span className="font-medium text-green-700">Why this market? </span>
+                <span className="font-medium text-brand-600">Why this market? </span>
                 {result.explanation}
               </div>
             </div>
@@ -166,16 +166,16 @@ export default function RecommendationsPage() {
                   <tbody>
                     {result.comparison.map((m) => (
                       <tr key={m.market_id}
-                        className={`border-b border-gray-50 last:border-0 ${m.is_recommended ? "bg-green-50" : ""}`}>
+                        className={`border-b border-gray-50 last:border-0 ${m.is_recommended ? "bg-brand-50" : ""}`}>
                         <td className="py-2.5 font-medium text-gray-800">
-                          {m.is_recommended && <span className="text-green-600 mr-1">★</span>}
+                          {m.is_recommended && <span className="text-brand-600 mr-1">★</span>}
                           {m.market_name}
                         </td>
                         <td className="py-2.5 text-right text-gray-600">₹{m.price_per_unit}</td>
                         <td className="py-2.5 text-right text-gray-500">{m.distance_km} km</td>
                         <td className="py-2.5 text-right text-gray-500">₹{m.transport_cost.toLocaleString()}</td>
                         <td className="py-2.5 text-right text-gray-600">₹{m.gross_revenue.toLocaleString()}</td>
-                        <td className={`py-2.5 text-right font-semibold ${m.is_recommended ? "text-green-700" : "text-gray-800"}`}>
+                        <td className={`py-2.5 text-right font-semibold ${m.is_recommended ? "text-brand-600" : "text-gray-800"}`}>
                           ₹{m.net_revenue.toLocaleString()}
                         </td>
                       </tr>
@@ -228,7 +228,7 @@ export default function RecommendationsPage() {
                       </div>
                     </td>
                     <td className="py-2 text-gray-700">{h.market_name}</td>
-                    <td className="py-2 text-right font-medium text-green-700">
+                    <td className="py-2 text-right font-medium text-brand-600">
                       {h.expected_net_revenue ? `₹${h.expected_net_revenue.toLocaleString()}` : "—"}
                     </td>
                   </tr>
@@ -244,11 +244,11 @@ export default function RecommendationsPage() {
 
 function Metric({ icon, label, value, highlight }) {
   return (
-    <div className={`rounded-lg border p-3 ${highlight ? "border-green-200 bg-white" : "border-gray-100 bg-white"}`}>
-      <div className={`flex items-center gap-1 text-xs mb-1 ${highlight ? "text-green-600" : "text-gray-400"}`}>
+    <div className={`rounded-lg border p-3 ${highlight ? "border-brand-200 bg-white" : "border-gray-100 bg-white"}`}>
+      <div className={`flex items-center gap-1 text-xs mb-1 ${highlight ? "text-brand-600" : "text-gray-400"}`}>
         {icon} {label}
       </div>
-      <p className={`text-base font-bold ${highlight ? "text-green-700" : "text-gray-800"}`}>{value}</p>
+      <p className={`text-base font-bold ${highlight ? "text-brand-600" : "text-gray-800"}`}>{value}</p>
     </div>
   );
 }

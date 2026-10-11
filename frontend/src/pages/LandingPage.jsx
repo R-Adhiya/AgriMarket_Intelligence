@@ -71,7 +71,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2.5 shrink-0" aria-label="AgriMarket Intelligence home">
-            <span className="flex items-center justify-center w-8 h-8 bg-green-700 rounded-lg">
+            <span className="flex items-center justify-center w-8 h-8 bg-brand-600 rounded-lg">
               <Leaf className="w-4 h-4 text-white" aria-hidden="true" />
             </span>
             <span className="font-bold text-gray-900 text-[15px]">AgriMarket Intelligence</span>
@@ -101,8 +101,8 @@ export default function LandingPage() {
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-green-700 text-white
-                         px-4 py-2 rounded-lg hover:bg-green-800 transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-medium bg-brand-600 text-white
+                         px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors"
             >
               Get started
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -142,7 +142,7 @@ export default function LandingPage() {
               <Link
                 to="/register"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 text-center px-3 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800"
+                className="flex-1 text-center px-3 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700"
               >
                 Register
               </Link>
@@ -169,15 +169,15 @@ export default function LandingPage() {
 
         <div className="relative z-10 py-20 sm:py-28 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700
-                             bg-green-100 px-3 py-1 rounded-full mb-6">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600
+                             bg-brand-50 px-3 py-1 rounded-full mb-6">
               <Leaf className="w-3.5 h-3.5" aria-hidden="true" />
               Agricultural Technology Platform
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight
                            leading-[1.1] max-w-3xl mx-auto">
               Directly from the Farm<br className="hidden sm:block" />
-              <span className="text-green-700"> to Your Hands</span>
+              <span className="text-brand-600"> to Your Hands</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
               AgriMarket Intelligence helps farmers compare markets, understand price trends,
@@ -187,7 +187,7 @@ export default function LandingPage() {
               <Link
                 to="/register"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
-                           bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800
+                           bg-brand-600 text-white font-semibold rounded-xl hover:bg-brand-700
                            transition-colors shadow-sm text-sm"
               >
                 Join as Farmer or Buyer
@@ -252,11 +252,11 @@ export default function LandingPage() {
             {features.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="rounded-xl border border-gray-200 bg-white p-6 hover:shadow-md hover:border-green-200
+                className="rounded-xl border border-gray-200 bg-white p-6 hover:shadow-md hover:border-brand-200
                            transition-all duration-200"
               >
-                <span className="inline-flex items-center justify-center w-10 h-10 bg-green-50 rounded-xl mb-4">
-                  <Icon className="w-5 h-5 text-green-700" aria-hidden="true" />
+                <span className="inline-flex items-center justify-center w-10 h-10 bg-brand-50 rounded-xl mb-4">
+                  <Icon className="w-5 h-5 text-brand-600" aria-hidden="true" />
                 </span>
                 <h3 className="font-semibold text-gray-900 mb-1.5 text-[15px]">{title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
@@ -267,12 +267,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── For Farmers ── */}
-      <section id="farmers" className="py-20 px-4 bg-green-50/50">
+      <section id="farmers" className="py-20 px-4 bg-brand-50/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700
-                               bg-green-100 px-3 py-1 rounded-full mb-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600
+                               bg-brand-50 px-3 py-1 rounded-full mb-4">
                 For Farmers
               </span>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -285,15 +285,15 @@ export default function LandingPage() {
               <ul className="space-y-3">
                 {farmerBenefits.map((b) => (
                   <li key={b} className="flex items-start gap-2.5">
-                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 shrink-0" aria-hidden="true" />
+                    <CheckCircle className="w-4 h-4 text-brand-600 mt-0.5 shrink-0" aria-hidden="true" />
                     <span className="text-sm text-gray-700">{b}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/register"
-                className="mt-8 inline-flex items-center gap-2 bg-green-700 text-white font-semibold
-                           px-5 py-2.5 rounded-xl hover:bg-green-800 transition-colors text-sm"
+                className="mt-8 inline-flex items-center gap-2 bg-brand-600 text-white font-semibold
+                           px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-colors text-sm"
               >
                 Register as Farmer
                 <ArrowRight className="w-4 h-4" />
@@ -314,10 +314,10 @@ export default function LandingPage() {
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                 Sample Recommendation
               </h3>
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-green-700 font-medium">Recommended Market</span>
-                  <span className="text-xs bg-green-700 text-white px-2 py-0.5 rounded-full">Best Return</span>
+                  <span className="text-xs text-brand-600 font-medium">Recommended Market</span>
+                  <span className="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full">Best Return</span>
                 </div>
                 <p className="text-lg font-bold text-gray-900">Erode APMC</p>
                 <p className="text-sm text-gray-500">Tamil Nadu · 85 km</p>
@@ -361,7 +361,7 @@ export default function LandingPage() {
               <div className="border border-gray-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-semibold text-gray-900">Tomato</span>
-                  <span className="text-xs bg-green-100 text-green-700 border border-green-200 px-2 py-0.5 rounded-md font-semibold">ACTIVE</span>
+                  <span className="text-xs bg-brand-50 text-brand-600 border border-brand-200 px-2 py-0.5 rounded-md font-semibold">ACTIVE</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs text-gray-500">
                   <div><span className="text-gray-400">Qty</span><br /><strong className="text-gray-800">500 kg</strong></div>
@@ -409,7 +409,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-2.5">
-              <span className="flex items-center justify-center w-7 h-7 bg-green-700 rounded-lg">
+              <span className="flex items-center justify-center w-7 h-7 bg-brand-600 rounded-lg">
                 <Leaf className="w-3.5 h-3.5 text-white" aria-hidden="true" />
               </span>
               <div>

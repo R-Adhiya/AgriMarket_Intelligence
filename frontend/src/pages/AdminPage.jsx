@@ -20,11 +20,11 @@ import PageHeader from "../components/PageHeader";
 // Shared
 // ---------------------------------------------------------------------------
 
-const PIE_COLORS = ["#16a34a", "#2563eb", "#d97706", "#dc2626", "#7c3aed"];
+const PIE_COLORS = ["#047857", "#2563eb", "#d97706", "#dc2626", "#7c3aed"];
 
 function StatCard({ icon: Icon, label, value, color = "green" }) {
   const colors = {
-    green:  "bg-green-50 text-green-700",
+    green:  "bg-brand-50 text-brand-600",
     blue:   "bg-blue-50 text-blue-700",
     amber:  "bg-amber-50 text-amber-700",
     purple: "bg-purple-50 text-purple-700",
@@ -45,18 +45,18 @@ function StatCard({ icon: Icon, label, value, color = "green" }) {
 
 function Badge({ status }) {
   const map = {
-    true:  { label: "Active",   cls: "bg-green-50 text-green-700" },
+    true:  { label: "Active",   cls: "bg-brand-50 text-brand-600" },
     false: { label: "Inactive", cls: "bg-red-50 text-red-600" },
-    FARMER: { label: "Farmer", cls: "bg-green-50 text-green-700" },
+    FARMER: { label: "Farmer", cls: "bg-brand-50 text-brand-600" },
     BUYER:  { label: "Buyer",  cls: "bg-blue-50 text-blue-700" },
     ADMIN:  { label: "Admin",  cls: "bg-purple-50 text-purple-700" },
     PENDING:  { label: "Pending",  cls: "bg-amber-50 text-amber-700" },
-    ACCEPTED: { label: "Accepted", cls: "bg-green-50 text-green-700" },
+    ACCEPTED: { label: "Accepted", cls: "bg-brand-50 text-brand-600" },
     REJECTED: { label: "Rejected", cls: "bg-red-50 text-red-600" },
     registration: { label: "Signup",      cls: "bg-blue-50 text-blue-700" },
     recommendation: { label: "Rec",       cls: "bg-amber-50 text-amber-700" },
     requirement:    { label: "Req",        cls: "bg-purple-50 text-purple-700" },
-    interest:       { label: "Interest",   cls: "bg-green-50 text-green-700" },
+    interest:       { label: "Interest",   cls: "bg-brand-50 text-brand-600" },
   };
   const entry = map[String(status)] ?? { label: String(status), cls: "bg-gray-100 text-gray-600" };
   return (
@@ -150,7 +150,7 @@ export default function AdminPage() {
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               tab === t
-                ? "border-green-600 text-green-700"
+                ? "border-brand-600 text-brand-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
@@ -262,7 +262,7 @@ function OverviewTab() {
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#16a34a" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="value" fill="#047857" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : <Empty msg="No requirement data." />}
@@ -315,7 +315,7 @@ function UsersTab() {
             onClick={() => setRoleFilter(r)}
             className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
               roleFilter === r
-                ? "bg-green-600 text-white border-green-600"
+                ? "bg-brand-600 text-white border-brand-600"
                 : "bg-white text-gray-600 border-gray-300 hover:border-green-400"
             }`}
           >
@@ -357,7 +357,7 @@ function UsersTab() {
                           className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition ${
                             u.is_active
                               ? "text-red-600 hover:bg-red-50"
-                              : "text-green-700 hover:bg-green-50"
+                              : "text-brand-600 hover:bg-brand-50"
                           }`}
                         >
                           {u.is_active
@@ -426,7 +426,7 @@ function FarmersTab() {
                       <td className="py-2 pr-3 text-gray-500">{f.state || "—"}</td>
                       <td className="py-2 pr-3 text-right text-gray-700">{f.crop_count}</td>
                       <td className="py-2 text-right">
-                        <span className={`text-xs font-medium ${f.available_crop_count > 0 ? "text-green-700" : "text-gray-400"}`}>
+                        <span className={`text-xs font-medium ${f.available_crop_count > 0 ? "text-brand-600" : "text-gray-400"}`}>
                           {f.available_crop_count}
                         </span>
                       </td>
