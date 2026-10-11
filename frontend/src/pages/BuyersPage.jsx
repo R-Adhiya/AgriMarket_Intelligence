@@ -799,17 +799,17 @@ export default function BuyersPage() {
 
       {/* Tab content */}
       {role === "BUYER" && (
-        <>
+        <div key={activeTab} className="animate-fade-in">
           {activeTab === "requirements" && <MyRequirements crops={crops} />}
           {activeTab === "find"         && <FindFarmers />}
           {activeTab === "sent"         && <SentRequests />}
-        </>
+        </div>
       )}
       {role === "FARMER" && (
-        <>
+        <div key={activeTab} className="animate-fade-in">
           {activeTab === "buyer-reqs" && <FarmerBuyerRequirements />}
           {activeTab === "received"   && <ReceivedRequests />}
-        </>
+        </div>
       )}
       {!["BUYER", "FARMER"].includes(role) && (
         <p className="text-sm text-gray-400">Log in as a buyer or farmer to use this feature.</p>

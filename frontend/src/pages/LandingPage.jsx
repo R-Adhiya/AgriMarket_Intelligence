@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ROUTES } from "../constants/routes";
+import useInView from "../hooks/useInView";
 
 const features = [
   {
@@ -63,6 +64,12 @@ const navLinks = [
 
 export default function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Scroll-triggered entrance refs
+  const cropRef     = useInView();
+  const featuresRef = useInView();
+  const farmersRef  = useInView();
+  const buyersRef   = useInView();
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -170,25 +177,29 @@ export default function LandingPage() {
         <div className="relative z-10 py-20 sm:py-28 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600
-                             bg-brand-50 px-3 py-1 rounded-full mb-6">
+                             bg-brand-50 px-3 py-1 rounded-full mb-6
+                             animate-fade-in stagger-1">
               <Leaf className="w-3.5 h-3.5" aria-hidden="true" />
               Agricultural Technology Platform
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight
-                           leading-[1.1] max-w-3xl mx-auto">
+                           leading-[1.1] max-w-3xl mx-auto
+                           animate-fade-up stagger-2">
               Directly from the Farm<br className="hidden sm:block" />
               <span className="text-brand-600"> to Your Hands</span>
             </h1>
-            <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed
+                          animate-fade-up stagger-3">
               AgriMarket Intelligence helps farmers compare markets, understand price trends,
               get smart recommendations, and connect directly with buyers — no middlemen required.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3
+                            animate-fade-up stagger-4">
               <Link
                 to="/register"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
                            bg-brand-600 text-white font-semibold rounded-xl hover:bg-brand-700
-                           transition-colors shadow-sm text-sm"
+                           hover:shadow-md transition-all duration-200 shadow-sm text-sm active:scale-[0.97]"
               >
                 Join as Farmer or Buyer
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -197,7 +208,7 @@ export default function LandingPage() {
                 to="/login"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3
                            border border-gray-300 text-gray-700 font-semibold rounded-xl
-                           hover:bg-gray-50 transition-colors text-sm"
+                           hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-sm active:scale-[0.97]"
               >
                 Sign in to your account
               </Link>
@@ -208,7 +219,7 @@ export default function LandingPage() {
 
       {/* ── Crop Showcase ── */}
       <section className="py-10 px-4 bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto">
+        <div ref={cropRef} className="max-w-6xl mx-auto inview-hidden">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center mb-6">
             Supported crops
           </p>
@@ -241,7 +252,7 @@ export default function LandingPage() {
 
       {/* ── Features ── */}
       <section id="features" className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
+        <div ref={featuresRef} className="max-w-6xl mx-auto inview-hidden">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Everything you need to sell smarter</h2>
             <p className="mt-3 text-gray-500 max-w-xl mx-auto text-[15px] leading-relaxed">
@@ -252,7 +263,8 @@ export default function LandingPage() {
             {features.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="rounded-xl border border-gray-200 bg-white p-6 hover:shadow-md hover:border-brand-200
+                className="rounded-xl border border-gray-200 bg-white p-6
+                           hover:shadow-md hover:border-brand-200 hover:-translate-y-1
                            transition-all duration-200"
               >
                 <span className="inline-flex items-center justify-center w-10 h-10 bg-brand-50 rounded-xl mb-4">
@@ -269,7 +281,7 @@ export default function LandingPage() {
       {/* ── For Farmers ── */}
       <section id="farmers" className="py-20 px-4 bg-brand-50/50">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div ref={farmersRef} className="grid md:grid-cols-2 gap-12 items-center inview-hidden">
             <div>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600
                                bg-brand-50 px-3 py-1 rounded-full mb-4">
@@ -342,7 +354,7 @@ export default function LandingPage() {
       {/* ── For Buyers ── */}
       <section id="buyers" className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div ref={buyersRef} className="grid md:grid-cols-2 gap-12 items-center inview-hidden">
             <div className="order-2 md:order-1 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-3">
               <div className="rounded-xl overflow-hidden -mx-2 -mt-2 mb-3">
                 <img

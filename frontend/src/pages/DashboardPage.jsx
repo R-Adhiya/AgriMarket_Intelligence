@@ -152,14 +152,14 @@ function FarmerDashboard({ user }) {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        <StatCard icon={Leaf}      label="My Crops"              value={stats.total_crops}            color="green" />
-        <StatCard icon={Package}   label="Available for Sale"    value={`${stats.available_crops} crops`}
+        <div className="animate-fade-up stagger-1"><StatCard icon={Leaf}         label="My Crops"              value={stats.total_crops}            color="green" /></div>
+        <div className="animate-fade-up stagger-2"><StatCard icon={Package}      label="Available for Sale"    value={`${stats.available_crops} crops`}
                   sub={stats.total_available_quantity > 0 ? `${stats.total_available_quantity.toLocaleString()} kg total` : undefined}
-                  color="green" />
-        <StatCard icon={Users}     label="Buyer Opportunities"   value={stats.buyer_opportunities}    color="blue" />
-        <StatCard icon={Lightbulb} label="Recommendations"       value={stats.recommendation_count}  color="amber" />
-        <StatCard icon={Clock}     label="Pending Requests"      value={stats.pending_requests}       color="purple" />
-        <StatCard icon={CheckCircle2} label="Accepted Connections" value={stats.accepted_requests}    color="green" />
+                  color="green" /></div>
+        <div className="animate-fade-up stagger-3"><StatCard icon={Users}        label="Buyer Opportunities"   value={stats.buyer_opportunities}    color="blue" /></div>
+        <div className="animate-fade-up stagger-4"><StatCard icon={Lightbulb}    label="Recommendations"       value={stats.recommendation_count}  color="amber" /></div>
+        <div className="animate-fade-up stagger-5"><StatCard icon={Clock}        label="Pending Requests"      value={stats.pending_requests}       color="purple" /></div>
+        <div className="animate-fade-up stagger-6"><StatCard icon={CheckCircle2} label="Accepted Connections"  value={stats.accepted_requests}      color="green" /></div>
       </div>
 
       {/* Middle row */}
@@ -360,10 +360,10 @@ function BuyerDashboard({ user }) {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard icon={ShoppingBag}   label="Active Requirements" value={stats.active_requirements}  color="green" />
-        <StatCard icon={Users}         label="Matching Farmers"    value={matching_farmers.length}    color="blue" />
-        <StatCard icon={Clock}         label="Pending Requests"    value={stats.pending_requests}     color="amber" />
-        <StatCard icon={CheckCircle2}  label="Accepted Connections" value={stats.accepted_connections} color="green" />
+        <div className="animate-fade-up stagger-1"><StatCard icon={ShoppingBag}  label="Active Requirements"  value={stats.active_requirements}  color="green" /></div>
+        <div className="animate-fade-up stagger-2"><StatCard icon={Users}        label="Matching Farmers"     value={matching_farmers.length}    color="blue" /></div>
+        <div className="animate-fade-up stagger-3"><StatCard icon={Clock}        label="Pending Requests"     value={stats.pending_requests}     color="amber" /></div>
+        <div className="animate-fade-up stagger-4"><StatCard icon={CheckCircle2} label="Accepted Connections" value={stats.accepted_connections}  color="green" /></div>
       </div>
 
       {/* Middle row */}
